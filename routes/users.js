@@ -61,12 +61,4 @@ router.delete('/:user_id', function(req, res, next) {
   });
 });
 
-router.post('/login', passport.authenticate('local'), function(req, res) {
-    res.json(req.user);
-});
-
-router.get('/logout', function(req, res) {
-    req.logout();
-});
-
 module.exports = router;
