@@ -1,11 +1,11 @@
 var express = require('express');
 var passport = require('passport');
-var Users = require('../models/users');
+var User = require('../models/users');
 var router = express.Router();
 
 /* POST new user */
 router.post('/', function(req, res) {
-  Users.register(new Users({ first_name : req.body.first_name, last_name : req.body.last_name, username : req.body.username, email : req.body.email, phone : req.body.phone }), req.body.password, function(err, user) {
+  User.register(new User({ first_name : req.body.first_name, last_name : req.body.last_name, username : req.body.username, email : req.body.email, phone : req.body.phone }), req.body.password, function(err, user) {
     if (err)
       res.json(err);
     passport.authenticate('local')(req, res, function () {
@@ -21,32 +21,32 @@ router.post('/', function(req, res) {
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  Users.find(function(err, users) {
+  User.find(function(err, users) {
     if (err)
-      res.send(err);
+      res.json(err);
     res.json(users);
   });
 });
 
 /* GET user. */
 router.get('/:user_id', function(req, res, next) {
-  Users.findById(req.params.user_id, function(err, user) {
+  User.findById(req.params.user_id, function(err, user) {
     if (err)
-      res.send(err);
+      res.json(err);
     res.json(user);
   });
 });
 
 /* PUT update user. */
 router.put('/:user_id', function(req, res, next) {
-  Users.findById(req.params.user_id, function(err, user) {
+  User.findById(req.params.user_id, function(err, user) {
     if (err)
-      res.send(err);
+      res.json(err);
     user.email = req.body.email || user.email;
     user.phone = req.body.phone || user.phone;
     user.save(function(err) {
       if (err)
-        res.send(err);
+        res.json(err);
       res.json(user);
     });
   });
@@ -54,10 +54,10 @@ router.put('/:user_id', function(req, res, next) {
 
 /* DELETE user. */
 router.delete('/:user_id', function(req, res, next) {
-  Users.findByIdAndRemove(req.params.user_id, function(err, user) {
-      if (err)
-        res.send(err);
-      res.json({ message: 'User deleted' });
+  User.findByIdAndRemove(req.params.user_id, function(err, user) {
+    if (err)
+      res.json(err);
+    res.json(user);
   });
 });
 

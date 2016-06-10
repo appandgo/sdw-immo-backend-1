@@ -13,6 +13,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
+var agencies = require('./routes/agencies');
 
 var app = express();
 
@@ -39,12 +40,13 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/login', login);
 app.use('/logout', logout);
+app.use('/agencies', agencies);
 
 // passport config
-var Users = require('./models/users');
-passport.use(new LocalStrategy(Users.authenticate()));
-passport.serializeUser(Users.serializeUser());
-passport.deserializeUser(Users.deserializeUser());
+var User = require('./models/users');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // mongoose
 mongoose.connect('mongodb://jonathanabout:y4LGlfmvY2BS5KA4eLM9509FW0pu@ds027505.mlab.com:27505/sdwimmobackend', function(err) {
