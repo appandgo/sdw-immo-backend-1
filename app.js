@@ -14,6 +14,8 @@ var users = require('./routes/users');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
 var agencies = require('./routes/agencies');
+var rents = require('./routes/rents');
+var sales = require('./routes/sales');
 
 var app = express();
 
@@ -41,6 +43,8 @@ app.use('/users', users);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/agencies', agencies);
+app.use('/rents', rents);
+app.use('/sales', sales);
 
 // passport config
 var User = require('./models/users');

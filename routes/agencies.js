@@ -59,7 +59,7 @@ router.put('/:agency_id', function(req, res, next) {
     agency.phone = req.body.phone || agency.phone;
     agency.email = req.body.email || agency.email;
 
-    user.save(function(err) {
+    agency.save(function(err) {
       if (err)
         res.json(err);
       res.json(agency);

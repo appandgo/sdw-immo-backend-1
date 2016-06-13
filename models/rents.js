@@ -4,8 +4,16 @@ require('mongoose-double')(mongoose);
 const SchemaTypes = mongoose.Schema.Types;
 
 const RentsSchema = new mongoose.Schema({
-  address: [ { building: String, coord: { type: [Number], index: '2d' }, street: String, zipcode: String } ],
-  characteristics: [ { price: SchemaTypes.Double, area: SchemaTypes.Double, rooms: { type: Number, min: 1, max: 99 }, bedrooms: { type: Number, min: 0, max: 99 } } ],
+  type: {type: String, enum: ['Apartment', 'House']},
+  address: { building: { type: String, required: true },
+    street: { type: String, required: true },
+    zipcode: { type: String, required: true },
+    city: { type: String, required: true },
+    country: { type: String, required: true } },
+  characteristics: { price: { type: SchemaTypes.Double, required: true },
+    area: { type: SchemaTypes.Double, required: true },
+    rooms: { type: Number, required: true, min: 1, max: 99 },
+    bedrooms: { type: Number, required: true, min: 0, max: 99 } },
   details: [ { name: String } ]
 },
 {
