@@ -60,6 +60,15 @@ router.put('/:agency_id', functions.middleware, function(req, res, next) {
     agency.phone = req.body.phone || agency.phone;
     agency.email = req.body.email || agency.email;
 
+    if ( typeof req.body.user_id !== 'undefined' && req.body.user_id )
+      agency.users.push({id: req.body.user_id});
+
+    if ( typeof req.body.sale_id !== 'undefined' && req.body.sale_id )
+      agency.sales.push({id: req.body.sale_id});
+
+    if ( typeof req.body.rent_id !== 'undefined' && req.body.rent_id )
+      agency.rents.push({id: req.body.rent_id});
+
     agency.save(function(err) {
       if (err)
         res.json(err);

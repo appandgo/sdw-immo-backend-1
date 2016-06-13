@@ -5,7 +5,9 @@ var AgenciesSchema = new mongoose.Schema({
   address: { building: String, street: String, zipcode: String, city: String, country: String },
   phone: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  users: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'User'} } ]
+  users: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'User'} } ],
+  sales: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sales'} } ],
+  rents: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rents'} } ]
 },
 {
     timestamps: true

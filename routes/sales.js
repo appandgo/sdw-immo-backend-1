@@ -69,6 +69,11 @@ router.put('/:sale_id', functions.middleware, function(req, res, next) {
     sale.address = address || sale.adress;
     sale.characteristics = characteristics || sale.characteristics;
 
+    if ( typeof req.body.detail_name !== 'undefined' && req.body.detail_name )
+      var detail = {'name': req.body.detail_name,
+        'more': req.body.detail_more}
+      sale.details.push(detail);
+
     sale.save(function(err) {
       if (err)
         res.json(err);

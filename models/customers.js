@@ -6,6 +6,8 @@ var CustomersSchema = new mongoose.Schema({
   email: { type: String, required: true, index: { unique: true } },
   phone: { type: String, unique: true },
   address: [ { building: String, coord: { type: [Number], index: '2d' }, street: String, zipcode: String } ],
+  sales: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sales'} } ],
+  rents: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rents'} } ],
 },
 {
     timestamps: true

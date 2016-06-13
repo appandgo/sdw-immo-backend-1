@@ -13,7 +13,9 @@ router.post('/', functions.middleware, function(req, res) {
     'city': req.body.city,
     'country': req.body.country};
 
-  var characteristics = {'price': req.body.price,
+  var characteristics = {'rent': req.body.rent,
+    'including_charges': req.body.including_charges,
+    'charges': req.body.charges,
     'area': req.body.area,
     'rooms': req.body.rooms,
     'bedrooms': req.body.bedrooms};
@@ -60,7 +62,9 @@ router.put('/:rent_id', functions.middleware, function(req, res, next) {
       'city': req.body.city,
       'country': req.body.country};
 
-    var characteristics = {'price': req.body.price,
+    var characteristics = {'rent': req.body.rent,
+      'including_charges': req.body.including_charges,
+      'charges': req.body.charges,
       'area': req.body.area,
       'rooms': req.body.rooms,
       'bedrooms': req.body.bedrooms};
@@ -68,6 +72,11 @@ router.put('/:rent_id', functions.middleware, function(req, res, next) {
     rent.type = req.body.type || rent.type;
     rent.address = address || rent.adress;
     rent.characteristics = characteristics || rent.characteristics;
+
+    if ( typeof req.body.detail_name !== 'undefined' && req.body.detail_name )
+      var detail = {'name': req.body.detail_name,
+        'more': req.body.detail_more}
+      rent.details.push(detail);
 
     rent.save(function(err) {
       if (err)

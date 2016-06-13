@@ -10,11 +10,13 @@ var RentsSchema = new mongoose.Schema({
     zipcode: { type: String, required: true },
     city: { type: String, required: true },
     country: { type: String, required: true } },
-  characteristics: { price: { type: SchemaTypes.Double, required: true },
+  characteristics: { rent: { type: SchemaTypes.Double, required: true },
+    including_charges: { type: Boolean, required: true},
+    charges: SchemaTypes.Double,
     area: { type: SchemaTypes.Double, required: true },
     rooms: { type: Number, required: true, min: 1, max: 99 },
     bedrooms: { type: Number, required: true, min: 0, max: 99 } },
-  details: [ { name: String } ]
+  details: [ { name: String, more: String } ]
 },
 {
     timestamps: true
