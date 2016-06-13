@@ -1,26 +1,29 @@
 var express = require('express');
-var passport = require('passport');
 var User = require('../models/users');
+var functions = require('../functions');
 var router = express.Router();
 
 /* POST new user */
 router.post('/', function(req, res) {
-  User.register(new User({ first_name : req.body.first_name, last_name : req.body.last_name, username : req.body.username, email : req.body.email, phone : req.body.phone }), req.body.password, function(err, user) {
+  var user = new User();
+
+  user.role = req.body.role;
+  user.first_name = req.body.first_name;
+  user.last_name = req.body.last_name;
+  user.username = req.body.username;
+  user.password = req.body.password;
+  user.email = req.body.email;
+  user.phone = req.body.phone;
+
+  user.save(function(err) {
     if (err)
       res.json(err);
-    passport.authenticate('local')(req, res, function () {
-      req.session.save(function (err) {
-        if (err) {
-          return next(err);
-        }
-        res.json(user);
-      });
-    });
+    res.json(user);
   });
 });
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', functions.middleware, function(req, res, next) {
   User.find(function(err, users) {
     if (err)
       res.json(err);
@@ -29,7 +32,7 @@ router.get('/', function(req, res, next) {
 });
 
 /* GET user. */
-router.get('/:user_id', function(req, res, next) {
+router.get('/:user_id', functions.middleware, function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);
@@ -38,12 +41,14 @@ router.get('/:user_id', function(req, res, next) {
 });
 
 /* PUT update user. */
-router.put('/:user_id', function(req, res, next) {
+router.put('/:user_id', functions.middleware, function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);
+
     user.email = req.body.email || user.email;
     user.phone = req.body.phone || user.phone;
+
     user.save(function(err) {
       if (err)
         res.json(err);
@@ -53,7 +58,7 @@ router.put('/:user_id', function(req, res, next) {
 });
 
 /* DELETE user. */
-router.delete('/:user_id', function(req, res, next) {
+router.delete('/:user_id', functions.middleware, function(req, res, next) {
   User.findByIdAndRemove(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);

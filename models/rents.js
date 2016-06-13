@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
+var mongoose = require('mongoose')
 require('mongoose-double')(mongoose);
 
-const SchemaTypes = mongoose.Schema.Types;
+var SchemaTypes = mongoose.Schema.Types;
 
-const RentsSchema = new mongoose.Schema({
+var RentsSchema = new mongoose.Schema({
   type: {type: String, enum: ['Apartment', 'House']},
   address: { building: { type: String, required: true },
     street: { type: String, required: true },

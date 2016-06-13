@@ -1,9 +1,10 @@
 var express = require('express');
 var Rent = require('../models/rents');
+var functions = require('../functions');
 var router = express.Router();
 
 /* POST new rent */
-router.post('/', function(req, res) {
+router.post('/', functions.middleware, function(req, res) {
   var rent = new Rent();
 
   var address = {'building': req.body.building,
@@ -48,7 +49,7 @@ router.get('/:rent_id', function(req, res, next) {
 });
 
 /* PUT update rent. */
-router.put('/:rent_id', function(req, res, next) {
+router.put('/:rent_id', functions.middleware, function(req, res, next) {
   Rent.findById(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);
@@ -77,7 +78,7 @@ router.put('/:rent_id', function(req, res, next) {
 });
 
 /* DELETE rent. */
-router.delete('/:rent_id', function(req, res, next) {
+router.delete('/:rent_id', functions.middleware, function(req, res, next) {
   Rent.findByIdAndRemove(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);

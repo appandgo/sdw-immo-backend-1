@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-const AgenciesSchema = new mongoose.Schema({
+var AgenciesSchema = new mongoose.Schema({
   name: { type: String, required: true },
   address: { building: String, street: String, zipcode: String, city: String, country: String },
   phone: { type: String, required: true, unique: true },
