@@ -46,7 +46,7 @@ router.put('/:user_id', functions.middleware, function(req, res, next) {
     if (err)
       res.json(err);
 
-    user.state = user.body.state || user.state;
+    user.state = req.body.state || user.state;
     user.role = req.body.role || user.role;
     user.first_name = req.body.first_name || user.first_name;
     user.last_name = req.body.last_name || user.last_name;
