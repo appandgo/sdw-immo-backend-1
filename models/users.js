@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var UsersSchema = new mongoose.Schema({
-  state: { type: Boolean, required: true },
+  state: { type: Boolean, required: true, default: true },
   role: { type: Number, enum: [0, 1, 2, 3], required: true },
   first_name: { type: String, required: true },
   last_name: { type: String, required: true },

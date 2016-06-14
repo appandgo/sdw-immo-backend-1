@@ -20,7 +20,6 @@ router.post('/', functions.middleware, function(req, res) {
     'rooms': req.body.rooms,
     'bedrooms': req.body.bedrooms};
 
-  rent.state = req.body.state;
   rent.type = req.body.type;
   rent.address = address;
   rent.characteristics = characteristics;
