@@ -81,7 +81,7 @@ router.delete('/:user_id', functions.middleware, function(req, res, next) {
 router.post('/login', function(req, res) {
   FrontUser.findOne({
     username: req.body.username
-  }, function(err, user) {
+  }, function(err, frontuser) {
     if (err) throw err;
     if (!frontuser) {
       res.json({ success: false, message: 'Authentication failed. User not found.' });
