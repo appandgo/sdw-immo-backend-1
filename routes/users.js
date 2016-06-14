@@ -1,5 +1,6 @@
 var express = require('express');
 var User = require('../models/users');
+var Agency = require('../models/agencies');
 var jwt = require('jsonwebtoken');
 var functions = require('../functions');
 var _ = require('lodash')
@@ -20,6 +21,16 @@ router.post('/', function(req, res) {
   user.save(function(err) {
     if (err)
       res.json(err);
+    if (req.body.agency_id)
+      Agency.findById(req.body.agency_id, function(err, agency) {
+        if (err)
+          res.json(err);
+        agency.users.push({id: user._id});
+        agency.save(function(err) {
+          if (err)
+            res.json(err);
+        });
+      });
     res.json(user);
   });
 });
@@ -71,6 +82,17 @@ router.put('/:user_id', function(req, res, next) {
     user.password = req.body.password || user.password;
     user.phone = req.body.phone || user.phone;
     user.email = req.body.email || user.email;
+
+    if (req.body.agency_id)
+      Agency.findById(req.body.agency_id, function(err, agency) {
+        if (err)
+          res.json(err);
+        agency.users.push({id: user._id});
+        agency.save(function(err) {
+          if (err)
+            res.json(err);
+        });
+      });
 
     user.save(function(err) {
       if (err)

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
 var AgenciesSchema = new mongoose.Schema({
+  state: { type: Boolean, required: true, default: true },
   name: { type: String, required: true },
   address: { building: { type: String, required: true },
     street: { type: String, required: true },

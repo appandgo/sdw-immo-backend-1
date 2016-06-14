@@ -15,7 +15,14 @@ var SalesSchema = new mongoose.Schema({
     area: { type: SchemaTypes.Double, required: true },
     rooms: { type: Number, required: true, min: 1, max: 99 },
     bedrooms: { type: Number, required: true, min: 0, max: 99 } },
-  details: [ { name: String, more: String } ]
+  details: [ { name: String, more: String } ],
+  images: [ { path: String, caption: String } ],
+  views: { type: Number, required: true, default: 0},
+  owner: {
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    phone: { type: String, required: true }
+  }
 },
 {
     timestamps: true
