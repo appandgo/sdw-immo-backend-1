@@ -11,6 +11,7 @@
     "express": "~4.13.1",
     "express-session": "^1.13.0",
     "jsonwebtoken": "^7.0.0",
+    "lodash": "^4.13.1",
     "mongoose": "^4.4.20",
     "mongoose-double": "0.0.1",
     "morgan": "~1.6.1",

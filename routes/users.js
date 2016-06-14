@@ -2,6 +2,7 @@ var express = require('express');
 var User = require('../models/users');
 var jwt = require('jsonwebtoken');
 var functions = require('../functions');
+var _ = require('lodash')
 var router = express.Router();
 
 /* POST new user */
@@ -28,8 +29,17 @@ router.get('/', function(req, res, next) {
   User.find(function(err, users) {
     if (err)
       res.json(err);
+    var users = users;
+    _(users).forEach(function(user) {
+      if (user.role == 0)
+        user.role_name = 'Super Admin';
+      else if (user.role == 1)
+        user.role_name = 'Admin';
+      else if (user.role == 2)
+        user.role_name = 'Editor';
+    });
     res.json(users);
-  }).select('-password');
+  }).select('-password').lean();
 });
 
 /* GET user. */
@@ -37,8 +47,14 @@ router.get('/:user_id', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);
+    if (user.role == 0)
+      user.role_name = 'Super Admin';
+    else if (user.role == 1)
+      user.role_name = 'Admin';
+    else if (user.role == 2)
+      user.role_name = 'Editor';
     res.json(user);
-  }).select('-password');
+  }).select('-password').lean();
 });
 
 /* PUT update user. */
