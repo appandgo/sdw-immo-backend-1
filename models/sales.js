@@ -4,6 +4,7 @@ require('mongoose-double')(mongoose);
 var SchemaTypes = mongoose.Schema.Types;
 
 var SalesSchema = new mongoose.Schema({
+  state: { type: Boolean, required: true },
   type: {type: String, enum: ['Apartment', 'House']},
   address: { building: { type: String, required: true },
     street: { type: String, required: true },

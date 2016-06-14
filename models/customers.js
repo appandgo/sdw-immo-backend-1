@@ -1,11 +1,15 @@
 var mongoose = require('mongoose');
 
 var CustomersSchema = new mongoose.Schema({
-  last_name: String,
-  first_name: String,
-  email: { type: String, required: true, index: { unique: true } },
-  phone: { type: String, unique: true },
-  address: [ { building: String, coord: { type: [Number], index: '2d' }, street: String, zipcode: String } ],
+  first_name: { type: String, required: true },
+  last_name: { type: String, required: true },
+  address: { building: { type: String, required: true },
+    street: { type: String, required: true },
+    zipcode: { type: String, required: true },
+    city: { type: String, required: true },
+    country: { type: String, required: true } },
+  phone: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
   sales: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sales'} } ],
   rents: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rents'} } ],
 },

@@ -4,6 +4,7 @@ require('mongoose-double')(mongoose);
 var SchemaTypes = mongoose.Schema.Types;
 
 var RentsSchema = new mongoose.Schema({
+  state: { type: Boolean, required: true },
   type: {type: String, enum: ['Apartment', 'House']},
   address: { building: { type: String, required: true },
     street: { type: String, required: true },
@@ -16,7 +17,8 @@ var RentsSchema = new mongoose.Schema({
     area: { type: SchemaTypes.Double, required: true },
     rooms: { type: Number, required: true, min: 1, max: 99 },
     bedrooms: { type: Number, required: true, min: 0, max: 99 } },
-  details: [ { name: String, more: String } ]
+  details: [ { name: String, more: String } ],
+  images: [ { path: String, caption: String } ]
 },
 {
     timestamps: true

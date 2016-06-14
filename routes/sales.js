@@ -18,8 +18,8 @@ router.post('/', functions.middleware, function(req, res) {
     'rooms': req.body.rooms,
     'bedrooms': req.body.bedrooms};
 
+  sale.state = req.body.state;
   sale.type = req.body.type;
-  sale.name = req.body.name;
   sale.address = address;
   sale.characteristics = characteristics;
 
@@ -54,17 +54,18 @@ router.put('/:sale_id', functions.middleware, function(req, res, next) {
     if (err)
       res.json(err);
 
-    var address = {'building': req.body.building,
-      'street': req.body.street,
-      'zipcode': req.body.zipcode,
-      'city': req.body.city,
-      'country': req.body.country};
+    var address = {'building': req.body.building || rent.address.building,
+      'street': req.body.street || rent.address.street,
+      'zipcode': req.body.zipcode || rent.address.zipcode,
+      'city': req.body.city || rent.address.city,
+      'country': req.body.country || rent.address.country};
 
-    var characteristics = {'price': req.body.price,
-      'area': req.body.area,
-      'rooms': req.body.rooms,
-      'bedrooms': req.body.bedrooms};
+    var characteristics = {'price': req.body.price || rent.characteristics.price,
+      'area': req.body.area || rent.characteristics.area,
+      'rooms': req.body.rooms || rent.characteristics.rooms,
+      'bedrooms': req.body.bedrooms || rent.characteristics.bedrooms};
 
+    sale.state = req.body.state || sale.state;
     sale.type = req.body.type || sale.type;
     sale.address = address || sale.adress;
     sale.characteristics = characteristics || sale.characteristics;

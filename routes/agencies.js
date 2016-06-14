@@ -49,11 +49,11 @@ router.put('/:agency_id', functions.middleware, function(req, res, next) {
     if (err)
       res.json(err);
 
-    var address = {'building': req.body.building,
-      'street': req.body.street,
-      'zipcode': req.body.zipcode,
-      'city': req.body.city,
-      'country': req.body.country};
+    var address = {'building': req.body.building || rent.address.building,
+      'street': req.body.street || rent.address.street,
+      'zipcode': req.body.zipcode || rent.address.zipcode,
+      'city': req.body.city || rent.address.city,
+      'country': req.body.country || rent.address.country};
 
     agency.name = req.body.name || agency.name;
     agency.address = address || agency.address;

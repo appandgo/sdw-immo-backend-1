@@ -10,8 +10,9 @@ var users = require('./routes/users');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
 var agencies = require('./routes/agencies');
-var rents = require('./routes/rents');
+var customers = require('./routes/customers');
 var sales = require('./routes/sales');
+var rents = require('./routes/rents');
 
 var app = express();
 
@@ -27,8 +28,9 @@ app.use('/users', users);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/agencies', agencies);
-app.use('/rents', rents);
+app.use('/customers', customers);
 app.use('/sales', sales);
+app.use('/rents', rents);
 
 // mongoose
 mongoose.connect('mongodb://jonathanabout:y4LGlfmvY2BS5KA4eLM9509FW0pu@ds027505.mlab.com:27505/sdwimmobackend', function(err) {
