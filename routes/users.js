@@ -1,5 +1,6 @@
 var express = require('express');
 var User = require('../models/users');
+var jwt = require('jsonwebtoken');
 var functions = require('../functions');
 var router = express.Router();
 
@@ -55,12 +56,6 @@ router.put('/:user_id', functions.middleware, function(req, res, next) {
     user.phone = req.body.phone || user.phone;
     user.email = req.body.email || user.email;
 
-    if ( typeof req.body.sale_id !== 'undefined' && req.body.sale_id )
-      user.sales_wishlist.push({id: req.body.sale_id});
-
-    if ( typeof req.body.rent_id !== 'undefined' && req.body.rent_id )
-      user.rents_wishlist.push({id: req.body.rent_id});
-
     user.save(function(err) {
       if (err)
         res.json(err);
@@ -75,6 +70,35 @@ router.delete('/:user_id', functions.middleware, function(req, res, next) {
     if (err)
       res.json(err);
     res.json(user);
+  });
+});
+
+/* LOGIN user. */
+router.post('/login', function(req, res) {
+  User.findOne({
+    username: req.body.username
+  }, function(err, user) {
+    if (err) throw err;
+    if (!user) {
+      res.json({ success: false, message: 'Authentication failed. User not found.' });
+    } else if (user) {
+      // check if password matches
+      if (user.password != req.body.password) {
+        res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+      } else {
+        // if user is found and password is right
+        // create a token
+        var token = jwt.sign(user, req.app.get('secretKey'), {
+          expiresIn: 60 * 60 // expires in 24 hours
+        });
+        // return the information including token as JSON
+        res.json({
+          success: true,
+          message: 'Enjoy your token!',
+          token: token
+        });
+      }
+    }
   });
 });
 

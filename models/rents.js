@@ -12,7 +12,7 @@ var RentsSchema = new mongoose.Schema({
     city: { type: String, required: true },
     country: { type: String, required: true } },
   characteristics: { rent: { type: SchemaTypes.Double, required: true },
-    including_charges: { type: Boolean, required: true},
+    including_charges: { type: Boolean, required: true, default: true},
     charges: SchemaTypes.Double,
     area: { type: SchemaTypes.Double, required: true },
     rooms: { type: Number, required: true, min: 1, max: 99 },

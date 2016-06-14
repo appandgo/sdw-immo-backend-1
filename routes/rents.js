@@ -14,7 +14,7 @@ router.post('/', functions.middleware, function(req, res) {
     'country': req.body.country};
 
   var characteristics = {'rent': req.body.rent,
-    'including_charges': req.body.including_charges,
+    'including_charges': true,
     'charges': req.body.charges,
     'area': req.body.area,
     'rooms': req.body.rooms,
