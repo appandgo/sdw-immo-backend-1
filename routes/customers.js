@@ -4,7 +4,7 @@ var functions = require('../functions');
 var router = express.Router();
 
 /* POST new customer */
-router.post('/', functions.middleware, function(req, res) {
+router.post('/', function(req, res) {
   var customer = new Customer();
 
   var address = {'building': req.body.building,
@@ -27,7 +27,7 @@ router.post('/', functions.middleware, function(req, res) {
 });
 
 /* GET customers listing. */
-router.get('/', functions.middleware, function(req, res, next) {
+router.get('/', function(req, res, next) {
   Customer.find(function(err, customers) {
     if (err)
       res.json(err);
@@ -36,7 +36,7 @@ router.get('/', functions.middleware, function(req, res, next) {
 });
 
 /* GET customer. */
-router.get('/:customer_id', functions.middleware, function(req, res, next) {
+router.get('/:customer_id', function(req, res, next) {
   Customer.findById(req.params.customer_id, function(err, customer) {
     if (err)
       res.json(err);
@@ -45,7 +45,7 @@ router.get('/:customer_id', functions.middleware, function(req, res, next) {
 });
 
 /* PUT update customer. */
-router.put('/:customer_id', functions.middleware, function(req, res, next) {
+router.put('/:customer_id', function(req, res, next) {
   Customer.findById(req.params.customer_id, function(err, customer) {
     if (err)
       res.json(err);
@@ -77,7 +77,7 @@ router.put('/:customer_id', functions.middleware, function(req, res, next) {
 });
 
 /* DELETE customer. */
-router.delete('/:customer_id', functions.middleware, function(req, res, next) {
+router.delete('/:customer_id', function(req, res, next) {
   Customer.findByIdAndRemove(req.params.customer_id, function(err, customer) {
     if (err)
       res.json(err);

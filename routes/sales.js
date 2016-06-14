@@ -4,7 +4,7 @@ var functions = require('../functions');
 var router = express.Router();
 
 /* POST new sale */
-router.post('/', functions.middleware, function(req, res) {
+router.post('/', function(req, res) {
   var sale = new Sale();
 
   var address = {'building': req.body.building,
@@ -48,7 +48,7 @@ router.get('/:sale_id', function(req, res, next) {
 });
 
 /* PUT update sale. */
-router.put('/:sale_id', functions.middleware, function(req, res, next) {
+router.put('/:sale_id', function(req, res, next) {
   Sale.findById(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
@@ -83,7 +83,7 @@ router.put('/:sale_id', functions.middleware, function(req, res, next) {
 });
 
 /* DELETE sale. */
-router.delete('/:sale_id', functions.middleware, function(req, res, next) {
+router.delete('/:sale_id', function(req, res, next) {
   Sale.findByIdAndRemove(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);

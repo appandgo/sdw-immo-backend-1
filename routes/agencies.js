@@ -4,7 +4,7 @@ var functions = require('../functions');
 var router = express.Router();
 
 /* POST new agency */
-router.post('/', functions.middleware, function(req, res) {
+router.post('/', function(req, res) {
   var agency = new Agency();
 
   var address = {'building': req.body.building,
@@ -26,7 +26,7 @@ router.post('/', functions.middleware, function(req, res) {
 });
 
 /* GET agencies listing. */
-router.get('/', functions.middleware, function(req, res, next) {
+router.get('/', function(req, res, next) {
   Agency.find(function(err, agencies) {
     if (err)
       res.json(err);
@@ -35,7 +35,7 @@ router.get('/', functions.middleware, function(req, res, next) {
 });
 
 /* GET agency. */
-router.get('/:agency_id', functions.middleware, function(req, res, next) {
+router.get('/:agency_id', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);
@@ -44,7 +44,7 @@ router.get('/:agency_id', functions.middleware, function(req, res, next) {
 });
 
 /* PUT update agency. */
-router.put('/:agency_id', functions.middleware, function(req, res, next) {
+router.put('/:agency_id', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);
@@ -78,7 +78,7 @@ router.put('/:agency_id', functions.middleware, function(req, res, next) {
 });
 
 /* DELETE agency. */
-router.delete('/:agency_id', functions.middleware, function(req, res, next) {
+router.delete('/:agency_id', function(req, res, next) {
   Agency.findByIdAndRemove(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);

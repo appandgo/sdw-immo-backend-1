@@ -23,7 +23,7 @@ router.post('/', function(req, res) {
 });
 
 /* GET frontusers listing. */
-router.get('/', functions.middleware, function(req, res, next) {
+router.get('/', function(req, res, next) {
   FrontUser.find(function(err, frontusers) {
     if (err)
       res.json(err);
@@ -32,7 +32,7 @@ router.get('/', functions.middleware, function(req, res, next) {
 });
 
 /* GET user. */
-router.get('/:user_id', functions.middleware, function(req, res, next) {
+router.get('/:user_id', function(req, res, next) {
   FrontUser.findById(req.params.frontuser_id, function(err, frontuser) {
     if (err)
       res.json(err);
@@ -41,7 +41,7 @@ router.get('/:user_id', functions.middleware, function(req, res, next) {
 });
 
 /* PUT update user. */
-router.put('/:frontuser_id', functions.middleware, function(req, res, next) {
+router.put('/:frontuser_id', function(req, res, next) {
   FrontUser.findById(req.params.frontuser_id, function(err, user) {
     if (err)
       res.json(err);
@@ -69,7 +69,7 @@ router.put('/:frontuser_id', functions.middleware, function(req, res, next) {
 });
 
 /* DELETE user. */
-router.delete('/:user_id', functions.middleware, function(req, res, next) {
+router.delete('/:user_id', function(req, res, next) {
   FrontUser.findByIdAndRemove(req.params.frontuser_id, function(err, frontuser) {
     if (err)
       res.json(err);
