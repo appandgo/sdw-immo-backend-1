@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
     if (err)
       res.json(err);
     res.json(frontusers);
-  });
+  }).select('-password');
 });
 
 /* GET user. */
@@ -37,7 +37,7 @@ router.get('/:user_id', function(req, res, next) {
     if (err)
       res.json(err);
     res.json(frontuser);
-  });
+  }).select('-password');
 });
 
 /* PUT update user. */
