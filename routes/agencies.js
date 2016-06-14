@@ -1,5 +1,6 @@
 var express = require('express');
 var Agency = require('../models/agencies');
+var User = require('../models/users');
 var functions = require('../functions');
 var router = express.Router();
 
@@ -61,13 +62,11 @@ router.put('/:agency_id', function(req, res, next) {
     agency.email = req.body.email || agency.email;
 
     if ( typeof req.body.user_id !== 'undefined' && req.body.user_id )
-      agency.users.push({id: req.body.user_id});
-
-    if ( typeof req.body.sale_id !== 'undefined' && req.body.sale_id )
-      agency.sales.push({id: req.body.sale_id});
-
-    if ( typeof req.body.rent_id !== 'undefined' && req.body.rent_id )
-      agency.rents.push({id: req.body.rent_id});
+      User.findById(req.body.user_id, function(err, user) {
+        if (err)
+          res.json(err);
+        agency.users.push({id: user._id});
+      });
 
     agency.save(function(err) {
       if (err)
