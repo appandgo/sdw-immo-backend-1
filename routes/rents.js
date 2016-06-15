@@ -16,7 +16,7 @@ router.post('/', function(req, res) {
     'country': req.body.country};
 
   var characteristics = {'rent': req.body.rent,
-    'including_charges': req.body.including_charges,
+    'including_charges': req.body.including_charges || true,
     'charges': req.body.charges,
     'area': req.body.area,
     'rooms': req.body.rooms,
@@ -26,10 +26,11 @@ router.post('/', function(req, res) {
     'last_name': req.body.last_name,
     'phone': req.body.phone};
 
-  rent.state = req.body.state;
+  rent.state = req.body.state || true;
   rent.type = req.body.type;
   rent.address = address;
   rent.characteristics = characteristics;
+  rent.description = req.body.description;
   rent.owner = owner;
 
   rent.save(function(err) {
@@ -107,6 +108,7 @@ router.put('/:rent_id', function(req, res, next) {
     rent.type = req.body.type || rent.type;
     rent.address = address || rent.adress;
     rent.characteristics = characteristics || rent.characteristics;
+    rent.description = req.body.description || rent.description;
     rent.owner = owner || rent.owner;
 
     if ( typeof req.body.detail_name !== 'undefined' && req.body.detail_name )

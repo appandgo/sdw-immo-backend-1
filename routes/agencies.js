@@ -14,6 +14,7 @@ router.post('/', function(req, res) {
     'city': req.body.city,
     'country': req.body.country};
 
+  agency.state = req.body.state || true;
   agency.name = req.body.name;
   agency.address = address;
   agency.phone = req.body.phone;
@@ -56,6 +57,7 @@ router.put('/:agency_id', function(req, res, next) {
       'city': req.body.city || rent.address.city,
       'country': req.body.country || rent.address.country};
 
+    agency.state = req.body.state || agency.state;
     agency.name = req.body.name || agency.name;
     agency.address = address || agency.address;
     agency.phone = req.body.phone || agency.phone;
