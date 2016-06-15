@@ -4,9 +4,6 @@ var User = require('../models/users');
 var Agency = require('../models/agencies');
 var functions = require('../functions');
 var _ = require('lodash')
-var multer = require('multer');
-var upload = multer({ dest: '../public/images' });
-var fs = require('fs');
 var router = express.Router();
 
 /* POST new sale */
@@ -139,17 +136,6 @@ router.put('/:sale_id', function(req, res, next) {
       var detail = {'name': req.body.detail_name,
         'more': req.body.detail_more}
       sale.details.push(detail);
-
-    /*console.log(req.file);
-    upload.single('image')
-    if ( req.file.originalname )
-      fs.readFile(req.files.originalname, function (err, data) {
-        var newPath = __dirname + "../public/images";
-        fs.writeFile(newPath, data, function (err) {
-          image = { 'path': newPath };
-          sale.images.push(image);
-        });
-      });*/
 
     sale.save(function(err) {
       if (err)
