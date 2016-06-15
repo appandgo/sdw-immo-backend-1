@@ -48,7 +48,7 @@ router.post('/', function(req, res) {
     Agency.findById(req.body.agency_id, function(err, agency) {
       if (err)
         res.json(err);
-      agency.users.push({id: user._id});
+      agency.rents.push({id: rent._id});
       agency.save(function(err) {
         if (err)
           res.json(err);
