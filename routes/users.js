@@ -40,7 +40,6 @@ router.get('/', function(req, res, next) {
   User.find(function(err, users) {
     if (err)
       res.json(err);
-    var users = users;
     _(users).forEach(function(user) {
       if (user.role == 0)
         user.role_name = 'Super Admin';

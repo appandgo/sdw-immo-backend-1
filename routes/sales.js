@@ -5,7 +5,7 @@ var Agency = require('../models/agencies');
 var functions = require('../functions');
 var _ = require('lodash')
 var multer = require('multer');
-var upload = multer({ dest: '../public/images' })
+var upload = multer({ dest: '../public/images' });
 var fs = require('fs');
 var router = express.Router();
 
@@ -75,16 +75,22 @@ router.get('/', function(req, res, next) {
         filteredQuery[field] = req.query[field];
   });
 
-  if (req.query['min'] && req.query['max'])
-    filteredQuery['characteristics.rooms'] = { '$gt' : _.toInteger(req.query['min']),
-      '$lt' : _.toInteger(req.query['max']) };
-  console.log(filteredQuery);
+  if (req.query['pricemin'] && req.query['pricemax'])
+    filteredQuery['characteristics.price'] = { '$gt' : _.toInteger(req.query['pricemin']),
+      '$lt' : _.toInteger(req.query['pricemax']) };
+
+  if (req.query['areamin'] && req.query['areamax'])
+    filteredQuery['characteristics.area'] = { '$gt' : _.toInteger(req.query['areamin']),
+      '$lt' : _.toInteger(req.query['areamax']) };
 
   Sale.find(filteredQuery, function(err, sales) {
     if (err)
       res.json(err);
+    _(sales).forEach(function(sale) {
+      sale.title = sale.type + ' ' + sale.characteristics.area + 'm2 ' + sale.address.city + ' ' + sale.address.zipcode;
+    });
     res.json(sales);
-  });
+  }).lean();
 });
 
 /* GET sale. */

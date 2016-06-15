@@ -3,6 +3,7 @@ var Rent = require('../models/rents');
 var User = require('../models/users');
 var Agency = require('../models/agencies');
 var functions = require('../functions');
+var _ = require('lodash')
 var router = express.Router();
 
 /* POST new rent */
@@ -60,11 +61,35 @@ router.post('/', function(req, res) {
 
 /* GET rents listing. */
 router.get('/', function(req, res, next) {
+  var filteredQuery = {};
+  var acceptableFields = ['type', 'city', 'rooms', 'bedrooms'];
+
+  _(acceptableFields).forEach(function(field) {
+    if (req.query[field])
+      if (field == 'city' || field == 'country')
+        filteredQuery['address.'+field] = req.query[field];
+      else if (field == 'rooms' || field == 'bedrooms')
+        filteredQuery['characteristics.'+field] = _.toInteger(req.query[field]);
+      else
+        filteredQuery[field] = req.query[field];
+  });
+
+  if (req.query['pricemin'] && req.query['pricemax'])
+    filteredQuery['characteristics.price'] = { '$gt' : _.toInteger(req.query['pricemin']),
+      '$lt' : _.toInteger(req.query['pricemax']) };
+
+  if (req.query['areamin'] && req.query['areamax'])
+    filteredQuery['characteristics.area'] = { '$gt' : _.toInteger(req.query['areamin']),
+      '$lt' : _.toInteger(req.query['areamax']) };
+      
   Rent.find(function(err, rents) {
     if (err)
       res.json(err);
+    _(rents).forEach(function(rent) {
+      rent.title = rent.type + ' ' + rent.characteristics.area + 'm2 ' + rent.address.city + ' ' + rent.address.zipcode;
+    });
     res.json(rents);
-  });
+  }).lean();
 });
 
 /* GET rent. */
