@@ -102,17 +102,18 @@ router.get('/:rent_id', function(req, res, next) {
     if (err)
       res.json(err);
     rent.views = rent.views + 1;
+    var getRent = rent.toJSON();
+    if (getRent.type == 0)
+      getRent.type_name = 'Appartement';
+    else if (getRent.type == 1)
+      getRent.type_name = 'Maison';
+    getRent.title = getRent.type_name + ' ' + getRent.characteristics.area + 'm2 ' + getRent.address.city + ' ' + getRent.address.zipcode;
     rent.save(function(err) {
       if (err)
         res.json(err);
-      if (rent.type == 0)
-        rent.type_name = 'Appartement';
-      else if (rent.type == 1)
-        rent.type_name = 'Maison';
-      rent.title = rent.type_name + ' ' + rent.characteristics.area + 'm2 ' + rent.address.city + ' ' + rent.address.zipcode;
-      res.json(rent);
+      res.json(getRent);
     });
-  }).lean();
+  });
 });
 
 /* PUT update rent. */

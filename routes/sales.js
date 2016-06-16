@@ -99,18 +99,19 @@ router.get('/:sale_id', function(req, res, next) {
   Sale.findById(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
-    sale.views = rent.views + 1;
+    sale.views = sale.views + 1;
+    var getSale = sale.toJSON();
+    if (getSale.type == 0)
+      getSale.type_name = 'Appartement';
+    else if (getSale.type == 1)
+      getSale.type_name = 'Maison';
+    getSale.title = getSale.type_name + ' ' + getSale.characteristics.area + 'm2 ' + getSale.address.city + ' ' + getSale.address.zipcode;
     sale.save(function(err) {
       if (err)
         res.json(err);
-      if (sale.type == 0)
-        sale.type_name = 'Appartement';
-      else if (sale.type == 1)
-        sale.type_name = 'Maison';
-      sale.title = sale.type_name + ' ' + sale.characteristics.area + 'm2 ' + sale.address.city + ' ' + sale.address.zipcode;
-      res.json(sale);
+      res.json(getSale);
     });
-  }).lean();
+  });
 });
 
 /* PUT update sale. */
