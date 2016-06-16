@@ -1,6 +1,7 @@
 var express = require('express');
 var Agency = require('../models/agencies');
 var User = require('../models/users');
+var _ = require('lodash');
 var functions = require('../functions');
 var router = express.Router();
 
@@ -50,8 +51,16 @@ router.get('/:agency_id/users', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);
+    _(agency.users).forEach(function(user) {
+      if (user.id.role == 0)
+        user.id.role_name = 'Super Admin';
+      else if (user.id.role == 1)
+        user.id.role_name = 'Admin';
+      else if (user.id.role == 2)
+        user.id.role_name = 'Editor';
+    });
     res.json(agency.users);
-  }).populate('users.id');
+  }).populate('users.id').lean();
 });
 
 /* GET agency sales. */
@@ -59,8 +68,15 @@ router.get('/:agency_id/sales', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);
+    _(agency.sales).forEach(function(sale) {
+      if (sale.id.type == 0)
+        sale.id.type_name = 'Appartement';
+      else if (sale.id.type == 1)
+        sale.id.type_name = 'Maison';
+      sale.id.title = sale.id.type_name + ' ' + sale.id.characteristics.area + 'm2 ' + sale.id.address.city + ' ' + sale.id.address.zipcode;
+    });
     res.json(agency.sales);
-  }).populate('sales.id');
+  }).populate('sales.id').lean();
 });
 
 /* GET agency rents. */
@@ -68,8 +84,15 @@ router.get('/:agency_id/rents', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);
+    _(agency.rents).forEach(function(rent) {
+      if (rent.id.type == 0)
+        rent.id.type_name = 'Appartement';
+      else if (rent.id.type == 1)
+        rent.id.type_name = 'Maison';
+      rent.id.title = rent.id.type_name + ' ' + rent.id.characteristics.area + 'm2 ' + rent.id.address.city + ' ' + rent.id.address.zipcode;
+    });
     res.json(agency.rents);
-  }).populate('rents.id');
+  }).populate('rents.id').lean();
 });
 
 /* PUT update agency. */

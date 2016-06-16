@@ -72,8 +72,15 @@ router.get('/:user_id/sales', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);
+    _(user.sales).forEach(function(sale) {
+      if (sale.id.type == 0)
+        sale.id.type_name = 'Appartement';
+      else if (sale.id.type == 1)
+        sale.id.type_name = 'Maison';
+      sale.id.title = sale.id.type_name + ' ' + sale.id.characteristics.area + 'm2 ' + sale.id.address.city + ' ' + sale.id.address.zipcode;
+    });
     res.json(user.sales);
-  }).populate('sales.id');
+  }).populate('sales.id').lean();
 });
 
 /* GET user rents. */
@@ -81,8 +88,15 @@ router.get('/:user_id/rents', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);
+    _(user.rents).forEach(function(rent) {
+      if (rent.id.type == 0)
+        rent.id.type_name = 'Appartement';
+      else if (rent.id.type == 1)
+        rent.id.type_name = 'Maison';
+      rent.id.title = rent.id.type_name + ' ' + rent.id.characteristics.area + 'm2 ' + rent.id.address.city + ' ' + rent.id.address.zipcode;
+    });
     res.json(user.rents);
-  }).populate('rents.id');
+  }).populate('rents.id').lean();
 });
 
 /* PUT update user. */
