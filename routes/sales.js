@@ -60,7 +60,10 @@ router.post('/', function(req, res) {
 /* GET sales listing. */
 router.get('/', function(req, res, next) {
   var filteredQuery = {};
-  var acceptableFields = ['type', 'city', 'country', 'rooms', 'bedrooms'];
+
+  filteredQuery['state'] = true || false;
+
+  var acceptableFields = ['state', 'type', 'city', 'country', 'rooms', 'bedrooms'];
 
   _(acceptableFields).forEach(function(field) {
     if (req.query[field])
@@ -73,33 +76,54 @@ router.get('/', function(req, res, next) {
   });
 
   if (req.query['pricemin'] && req.query['pricemax'])
-    filteredQuery['characteristics.price'] = { '$gte' : req.query['pricemin'],
-      '$lte' : req.query['pricemax'] };
+    filteredQuery['characteristics.price'] = { '$gte' : _.toInteger(req.query['pricemin']),
+      '$lte' : _.toInteger(req.query['pricemax']) };
   else if (req.query['pricemin'])
-    filteredQuery['characteristics.price'] = { '$gte' : req.query['pricemin'] };
+    filteredQuery['characteristics.price'] = { '$gte' : _.toInteger(req.query['pricemin']) };
   else if (req.query['pricemax'])
-    filteredQuery['characteristics.price'] = { '$lte' : req.query['pricemax'] };
+    filteredQuery['characteristics.price'] = { '$lte' : _.toInteger(req.query['pricemax']) };
 
   if (req.query['areamin'] && req.query['areamax'])
-    filteredQuery['characteristics.area'] = { '$gte' : req.query['areamin'],
-      '$lte' : req.query['areamax'] };
+    filteredQuery['characteristics.area'] = { '$gte' : _.toInteger(req.query['areamin']),
+      '$lte' : _.toInteger(req.query['areamax']) };
   else if (req.query['areamin'])
-    filteredQuery['characteristics.area'] = { '$gte' : req.query['areamin'] };
+    filteredQuery['characteristics.area'] = { '$gte' : _.toInteger(req.query['areamin']) };
   else if (req.query['areamax'])
-    filteredQuery['characteristics.area'] = { '$lte' : req.query['areamax'] };
+    filteredQuery['characteristics.area'] = { '$lte' : _.toInteger(req.query['areamax']) };
 
-  var sortQuery;
+  var sortQuery = {'createdAt': -1};
 
-  if (req.query['sort'] == 'price' && req.query['order'] == 'asc')
-    sortQuery = {sort: {'characteristics.price': 1}};
+  if (req.query['sort'] == 'createdat' && req.query['order'] == 'asc')
+    sortQuery = {'createdAt': 1};
+  else if (req.query['sort'] == 'price' && req.query['order'] == 'asc')
+    sortQuery = {'characteristics.price': 1};
   else if (req.query['sort'] == 'price' && req.query['order'] == 'desc')
-    sortQuery = {sort: {'characteristics.price': -1}};
+    sortQuery = {'characteristics.price': -1};
   else if (req.query['sort'] == 'area' && req.query['order'] == 'asc')
-    sortQuery = {sort: {'characteristics.area': 1}};
+    sortQuery = {'characteristics.area': 1};
   else if (req.query['sort'] == 'area' && req.query['order'] == 'desc')
-    sortQuery = {sort: {'characteristics.area': -1}};
+    sortQuery = {'characteristics.area': -1};
+  else if (req.query['sort'] == 'pricearea' && req.query['order'] == 'asc')
+    sortQuery = {'pricearea': 1};
+  else if (req.query['sort'] == 'pricearea' && req.query['order'] == 'desc')
+    sortQuery = {'pricearea': -1};
 
-  Sale.find(filteredQuery, null, sortQuery, function(err, sales) {
+  Sale.aggregate([{ $project: { _id: 1,
+      createdAt: 1,
+      updatedAt: 1,
+      state: 1,
+      type: 1,
+      address: 1,
+      characteristics: 1,
+      details: 1,
+      description: 1,
+      images: 1,
+      owner: 1,
+      views: 1,
+      pricearea: { $divide: [ '$characteristics.price', '$characteristics.area' ] } } },
+    { $match : { $and: [ filteredQuery ] } },
+    { $sort: sortQuery }
+  ], function(err, sales) {
     if (err)
       res.json(err);
     _(sales).forEach(function(sale) {
@@ -110,7 +134,8 @@ router.get('/', function(req, res, next) {
       sale.title = sale.type_name + ' ' + sale.characteristics.area + 'm2 ' + sale.address.city + ' ' + sale.address.zipcode;
     });
     res.json(sales);
-  }).lean();
+  });
+
 });
 
 /* GET sale. */
