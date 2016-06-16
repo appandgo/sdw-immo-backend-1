@@ -45,6 +45,33 @@ router.get('/:agency_id', function(req, res, next) {
   });
 });
 
+/* GET agency users. */
+router.get('/:agency_id/users', function(req, res, next) {
+  Agency.findById(req.params.agency_id, function(err, agency) {
+    if (err)
+      res.json(err);
+    res.json(agency.users);
+  }).populate('users.id');
+});
+
+/* GET agency sales. */
+router.get('/:agency_id/sales', function(req, res, next) {
+  Agency.findById(req.params.agency_id, function(err, agency) {
+    if (err)
+      res.json(err);
+    res.json(agency.sales);
+  }).populate('sales.id');
+});
+
+/* GET agency rents. */
+router.get('/:agency_id/rents', function(req, res, next) {
+  Agency.findById(req.params.agency_id, function(err, agency) {
+    if (err)
+      res.json(err);
+    res.json(agency.rents);
+  }).populate('rents.id');
+});
+
 /* PUT update agency. */
 router.put('/:agency_id', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {

@@ -63,7 +63,7 @@ router.get('/', function(req, res, next) {
 
   filteredQuery['state'] = true || false;
 
-  var acceptableFields = ['state', 'type', 'city', 'country', 'rooms', 'bedrooms'];
+  var acceptableFields = ['type', 'city', 'country', 'rooms', 'bedrooms'];
 
   _(acceptableFields).forEach(function(field) {
     if (req.query[field])

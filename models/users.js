@@ -9,8 +9,8 @@ var UsersSchema = new mongoose.Schema({
   password: { type: String, required: true },
   phone: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  sales: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sales'} } ],
-  rents: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rents'} } ]
+  sales: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sale'} } ],
+  rents: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rent'} } ]
 },
 {
     timestamps: true

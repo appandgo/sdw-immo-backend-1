@@ -11,8 +11,8 @@ var AgenciesSchema = new mongoose.Schema({
   phone: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   users: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'User'} } ],
-  sales: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sales'} } ],
-  rents: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rents'} } ]
+  sales: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Sale'} } ],
+  rents: [ { id: { type: mongoose.Schema.Types.ObjectId, ref: 'Rent'} } ]
 },
 {
     timestamps: true

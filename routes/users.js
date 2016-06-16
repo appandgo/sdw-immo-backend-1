@@ -67,6 +67,24 @@ router.get('/:user_id', function(req, res, next) {
   }).select('-password').lean();
 });
 
+/* GET user sales. */
+router.get('/:user_id/sales', function(req, res, next) {
+  User.findById(req.params.user_id, function(err, user) {
+    if (err)
+      res.json(err);
+    res.json(user.sales);
+  }).populate('sales.id');
+});
+
+/* GET user rents. */
+router.get('/:user_id/rents', function(req, res, next) {
+  User.findById(req.params.user_id, function(err, user) {
+    if (err)
+      res.json(err);
+    res.json(user.rents);
+  }).populate('rents.id');
+});
+
 /* PUT update user. */
 router.put('/:user_id', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
