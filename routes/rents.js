@@ -90,7 +90,18 @@ router.get('/', function(req, res, next) {
   else if (req.query['areamax'])
     filteredQuery['characteristics.area'] = { '$lte' : req.query['areamax'] };
 
-  Rent.find(function(err, rents) {
+  var sortQuery;
+
+  if (req.query['sort'] == 'rent' && req.query['order'] == 'asc')
+    sortQuery = {sort: {'characteristics.rent': 1}};
+  else if (req.query['sort'] == 'rent' && req.query['order'] == 'desc')
+    sortQuery = {sort: {'characteristics.rent': -1}};
+  else if (req.query['sort'] == 'area' && req.query['order'] == 'asc')
+    sortQuery = {sort: {'characteristics.area': 1}};
+  else if (req.query['sort'] == 'area' && req.query['order'] == 'desc')
+    sortQuery = {sort: {'characteristics.area': -1}};
+
+  Rent.find(filteredQuery, null, sortQuery, function(err, rents) {
     if (err)
       res.json(err);
     _(rents).forEach(function(rent) {

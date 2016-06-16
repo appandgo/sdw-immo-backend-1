@@ -88,7 +88,18 @@ router.get('/', function(req, res, next) {
   else if (req.query['areamax'])
     filteredQuery['characteristics.area'] = { '$lte' : req.query['areamax'] };
 
-  Sale.find(filteredQuery, function(err, sales) {
+  var sortQuery;
+
+  if (req.query['sort'] == 'price' && req.query['order'] == 'asc')
+    sortQuery = {sort: {'characteristics.price': 1}};
+  else if (req.query['sort'] == 'price' && req.query['order'] == 'desc')
+    sortQuery = {sort: {'characteristics.price': -1}};
+  else if (req.query['sort'] == 'area' && req.query['order'] == 'asc')
+    sortQuery = {sort: {'characteristics.area': 1}};
+  else if (req.query['sort'] == 'area' && req.query['order'] == 'desc')
+    sortQuery = {sort: {'characteristics.area': -1}};
+
+  Sale.find(filteredQuery, null, sortQuery, function(err, sales) {
     if (err)
       res.json(err);
     _(sales).forEach(function(sale) {
