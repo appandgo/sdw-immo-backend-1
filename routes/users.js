@@ -1,9 +1,9 @@
 var express = require('express');
 var User = require('../models/users');
 var Agency = require('../models/agencies');
+var _ = require('lodash');
 var jwt = require('jsonwebtoken');
 var functions = require('../functions');
-var _ = require('lodash')
 var router = express.Router();
 
 /* POST new user */

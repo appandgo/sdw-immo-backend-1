@@ -2,8 +2,8 @@ var express = require('express');
 var Rent = require('../models/rents');
 var User = require('../models/users');
 var Agency = require('../models/agencies');
+var _ = require('lodash');
 var functions = require('../functions');
-var _ = require('lodash')
 var router = express.Router();
 
 /* POST new rent */
@@ -62,25 +62,33 @@ router.post('/', function(req, res) {
 /* GET rents listing. */
 router.get('/', function(req, res, next) {
   var filteredQuery = {};
-  var acceptableFields = ['type', 'city', 'rooms', 'bedrooms'];
+  var acceptableFields = ['type', 'city', 'country', 'rooms', 'bedrooms'];
 
   _(acceptableFields).forEach(function(field) {
     if (req.query[field])
       if (field == 'city' || field == 'country')
         filteredQuery['address.'+field] = req.query[field];
       else if (field == 'rooms' || field == 'bedrooms')
-        filteredQuery['characteristics.'+field] = _.toInteger(req.query[field]);
+        filteredQuery['characteristics.'+field] = req.query[field];
       else
         filteredQuery[field] = req.query[field];
   });
 
-  if (req.query['pricemin'] && req.query['pricemax'])
-    filteredQuery['characteristics.price'] = { '$gt' : _.toInteger(req.query['pricemin']),
-      '$lt' : _.toInteger(req.query['pricemax']) };
+  if (req.query['rentmin'] && req.query['rentmax'])
+    filteredQuery['characteristics.rent'] = { '$gte' : req.query['rentmin'],
+      '$lte' : req.query['rentmax'] };
+  else if (req.query['rentmin'])
+    filteredQuery['characteristics.rent'] = { '$gte' : req.query['rentmin'] };
+  else if (req.query['rentmax'])
+    filteredQuery['characteristics.rent'] = { '$lte' : req.query['rentmax'] };
 
   if (req.query['areamin'] && req.query['areamax'])
-    filteredQuery['characteristics.area'] = { '$gt' : _.toInteger(req.query['areamin']),
-      '$lt' : _.toInteger(req.query['areamax']) };
+    filteredQuery['characteristics.area'] = { '$gte' : req.query['areamin'],
+      '$lte' : req.query['areamax'] };
+  else if (req.query['areamin'])
+    filteredQuery['characteristics.area'] = { '$gte' : req.query['areamin'] };
+  else if (req.query['areamax'])
+    filteredQuery['characteristics.area'] = { '$lte' : req.query['areamax'] };
 
   Rent.find(function(err, rents) {
     if (err)
