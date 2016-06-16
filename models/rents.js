@@ -4,7 +4,7 @@ var SchemaTypes = mongoose.Schema.Types;
 
 var RentsSchema = new mongoose.Schema({
   state: { type: Boolean, required: true, default: true },
-  type: {type: String, enum: ['Apartment', 'House']},
+  type: {type: Number, enum: [0, 1]},
   address: { building: { type: String, required: true },
     street: { type: String, required: true },
     zipcode: { type: String, required: true },

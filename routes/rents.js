@@ -81,12 +81,16 @@ router.get('/', function(req, res, next) {
   if (req.query['areamin'] && req.query['areamax'])
     filteredQuery['characteristics.area'] = { '$gt' : _.toInteger(req.query['areamin']),
       '$lt' : _.toInteger(req.query['areamax']) };
-      
+
   Rent.find(function(err, rents) {
     if (err)
       res.json(err);
     _(rents).forEach(function(rent) {
-      rent.title = rent.type + ' ' + rent.characteristics.area + 'm2 ' + rent.address.city + ' ' + rent.address.zipcode;
+      if (rent.type == 0)
+        rent.type_name = 'Appartement';
+      else if (rent.type == 1)
+        rent.type_name = 'Maison';
+      rent.title = rent.type_name + ' ' + rent.characteristics.area + 'm2 ' + rent.address.city + ' ' + rent.address.zipcode;
     });
     res.json(rents);
   }).lean();
@@ -101,9 +105,14 @@ router.get('/:rent_id', function(req, res, next) {
     rent.save(function(err) {
       if (err)
         res.json(err);
+      if (rent.type == 0)
+        rent.type_name = 'Appartement';
+      else if (rent.type == 1)
+        rent.type_name = 'Maison';
+      rent.title = rent.type_name + ' ' + rent.characteristics.area + 'm2 ' + rent.address.city + ' ' + rent.address.zipcode;
       res.json(rent);
     });
-  });
+  }).lean();
 });
 
 /* PUT update rent. */

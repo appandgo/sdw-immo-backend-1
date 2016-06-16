@@ -84,7 +84,11 @@ router.get('/', function(req, res, next) {
     if (err)
       res.json(err);
     _(sales).forEach(function(sale) {
-      sale.title = sale.type + ' ' + sale.characteristics.area + 'm2 ' + sale.address.city + ' ' + sale.address.zipcode;
+      if (sale.type == 0)
+        sale.type_name = 'Appartement';
+      else if (sale.type == 1)
+        sale.type_name = 'Maison';
+      sale.title = sale.type_name + ' ' + sale.characteristics.area + 'm2 ' + sale.address.city + ' ' + sale.address.zipcode;
     });
     res.json(sales);
   }).lean();
@@ -99,9 +103,14 @@ router.get('/:sale_id', function(req, res, next) {
     sale.save(function(err) {
       if (err)
         res.json(err);
+      if (sale.type == 0)
+        sale.type_name = 'Appartement';
+      else if (sale.type == 1)
+        sale.type_name = 'Maison';
+      sale.title = sale.type_name + ' ' + sale.characteristics.area + 'm2 ' + sale.address.city + ' ' + sale.address.zipcode;
       res.json(sale);
     });
-  });
+  }).lean();
 });
 
 /* PUT update sale. */
