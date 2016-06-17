@@ -212,8 +212,8 @@ router.delete('/:rent_id', function(req, res, next) {
   });
 });
 
-/* Sale to Wishlist */
-router.post('/:rent_id/wishlist', function(req, res) {
+/* SAVE rent */
+router.post('/:rent_id/save', function(req, res) {
   Rent.findById(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);

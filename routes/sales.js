@@ -209,8 +209,8 @@ router.delete('/:sale_id', function(req, res, next) {
   });
 });
 
-/* Sale to Wishlist */
-router.post('/:sale_id/wishlist', function(req, res) {
+/* SAVE sale */
+router.post('/:sale_id/save', function(req, res) {
   Sale.findById(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
