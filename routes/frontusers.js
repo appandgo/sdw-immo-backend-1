@@ -1,6 +1,7 @@
 var express = require('express');
 var FrontUser = require('../models/frontusers');
 var jwt = require('jsonwebtoken');
+var _ = require('lodash');
 var functions = require('../functions');
 var router = express.Router();
 
@@ -32,12 +33,48 @@ router.get('/', function(req, res, next) {
 });
 
 /* GET user. */
-router.get('/:user_id', function(req, res, next) {
+router.get('/:frontuser_id', function(req, res, next) {
   FrontUser.findById(req.params.frontuser_id, function(err, frontuser) {
     if (err)
       res.json(err);
     res.json(frontuser);
   }).select('-password');
+});
+
+/* GET user sales. */
+router.get('/:frontuser_id/sales', function(req, res, next) {
+  FrontUser.findById(req.params.frontuser_id, function(err, frontuser) {
+    if (err)
+      res.json(err);
+    var getFrontUserSales = {};
+    _(frontuser.sales).forEach(function(sale) {
+      getFrontUserSales[sale.id._id] = sale.id;
+      if (getFrontUserSales[sale.id._id].type == 0)
+        getFrontUserSales[sale.id._id].type_name = 'Appartement';
+      else if (getFrontUserSales[sale.id._id].type == 1)
+        getFrontUserSales[sale.id._id].type_name = 'Maison';
+      getFrontUserSales[sale.id._id].title = getFrontUserSales[sale.id._id].type_name + ' ' + getFrontUserSales[sale.id._id].characteristics.area + 'm2 ' + getFrontUserSales[sale.id._id].address.city + ' ' + getFrontUserSales[sale.id._id].address.zipcode;
+    });
+    res.json(getFrontUserSales);
+  }).populate('sales.id').lean();
+});
+
+/* GET user rents. */
+router.get('/:frontuser_id/rents', function(req, res, next) {
+  FrontUser.findById(req.params.frontuser_id, function(err, frontuser) {
+    if (err)
+      res.json(err);
+    var getFrontUserRents = {};
+    _(frontuser.rents).forEach(function(rent) {
+      getFrontUserRents[rent.id._id] = rent.id;
+      if (getFrontUserRents[rent.id._id].type == 0)
+        getFrontUserRents[rent.id._id].type_name = 'Appartement';
+      else if (getFrontUserRents[rent.id._id].type == 1)
+        getFrontUserRents[rent.id._id].type_name = 'Maison';
+      getFrontUserRents[rent.id._id].title = rent.id.type_name + ' ' + getFrontUserRents[rent.id._id].characteristics.area + 'm2 ' + getFrontUserRents[rent.id._id].address.city + ' ' + getFrontUserRents[rent.id._id].address.zipcode;
+    });
+    res.json(getFrontUserRents);
+  }).populate('rents.id').lean();
 });
 
 /* PUT update user. */
@@ -53,12 +90,6 @@ router.put('/:frontuser_id', function(req, res, next) {
     frontuser.password = req.body.password || frontuser.password;
     frontuser.phone = req.body.phone || frontuser.phone;
     frontuser.email = req.body.email || frontuser.email;
-
-    if ( typeof req.body.sale_id !== 'undefined' && req.body.sale_id )
-      frontuser.sales_wishlist.push({id: req.body.sale_id});
-
-    if ( typeof req.body.rent_id !== 'undefined' && req.body.rent_id )
-      frontuser.rents_wishlist.push({id: req.body.rent_id});
 
     frontuser.save(function(err) {
       if (err)

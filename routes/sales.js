@@ -2,6 +2,7 @@ var express = require('express');
 var Sale = require('../models/sales');
 var User = require('../models/users');
 var Agency = require('../models/agencies');
+var FrontUser = require('../models/frontusers');
 var _ = require('lodash');
 var functions = require('../functions');
 var router = express.Router();
@@ -205,6 +206,23 @@ router.delete('/:sale_id', function(req, res, next) {
     if (err)
       res.json(err);
     res.json(sale);
+  });
+});
+
+/* Sale to Wishlist */
+router.post('/:sale_id/wishlist', function(req, res) {
+  Sale.findById(req.params.sale_id, function(err, sale) {
+    if (err)
+      res.json(err);
+    FrontUser.findById(req.body.frontuser_id, function(err, frontuser) {
+      if (err)
+        res.json(err);
+      frontuser.sales.push({id: sale._id});
+      frontuser.save(function(err) {
+        if (err)
+          res.json(err);
+      });
+    });
   });
 });
 
