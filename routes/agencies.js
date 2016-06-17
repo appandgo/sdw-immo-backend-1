@@ -51,15 +51,17 @@ router.get('/:agency_id/users', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);
+    var getAgencyUsers = {};
     _(agency.users).forEach(function(user) {
-      if (user.id.role == 0)
-        user.id.role_name = 'Super Admin';
-      else if (user.id.role == 1)
-        user.id.role_name = 'Admin';
-      else if (user.id.role == 2)
-        user.id.role_name = 'Editor';
+      getAgencyUsers[user.id._id] = user.id;
+      if (getAgencyUsers[user.id._id].role == 0)
+        getAgencyUsers[user.id._id].role_name = 'Super Admin';
+      else if (getAgencyUsers[user.id._id].role == 1)
+        getAgencyUsers[user.id._id].role_name = 'Admin';
+      else if (getAgencyUsers[user.id._id].role == 2)
+        getAgencyUsers[user.id._id].role_name = 'Editor';
     });
-    res.json(agency.users);
+    res.json(getAgencyUsers);
   }).populate('users.id').lean();
 });
 
@@ -68,14 +70,16 @@ router.get('/:agency_id/sales', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);
+    var getAgencySales = {};
     _(agency.sales).forEach(function(sale) {
-      if (sale.id.type == 0)
-        sale.id.type_name = 'Appartement';
-      else if (sale.id.type == 1)
-        sale.id.type_name = 'Maison';
-      sale.id.title = sale.id.type_name + ' ' + sale.id.characteristics.area + 'm2 ' + sale.id.address.city + ' ' + sale.id.address.zipcode;
+      getAgencySales[sale.id._id] = sale.id;
+      if (getAgencySales[sale.id._id].type == 0)
+        getAgencySales[sale.id._id].type_name = 'Appartement';
+      else if (getAgencySales[sale.id._id].type == 1)
+        getAgencySales[sale.id._id].type_name = 'Maison';
+      getAgencySales[sale.id._id].title = getAgencySales[sale.id._id].type_name + ' ' + getAgencySales[sale.id._id].characteristics.area + 'm2 ' + getAgencySales[sale.id._id].address.city + ' ' + getAgencySales[sale.id._id].address.zipcode;
     });
-    res.json(agency.sales);
+    res.json(getAgencySales);
   }).populate('sales.id').lean();
 });
 
@@ -84,14 +88,16 @@ router.get('/:agency_id/rents', function(req, res, next) {
   Agency.findById(req.params.agency_id, function(err, agency) {
     if (err)
       res.json(err);
+    var getAgencyRents = {};
     _(agency.rents).forEach(function(rent) {
-      if (rent.id.type == 0)
-        rent.id.type_name = 'Appartement';
-      else if (rent.id.type == 1)
-        rent.id.type_name = 'Maison';
-      rent.id.title = rent.id.type_name + ' ' + rent.id.characteristics.area + 'm2 ' + rent.id.address.city + ' ' + rent.id.address.zipcode;
+      getAgencyRents[rent.id._id] = rent.id;
+      if (getAgencyRents[rent.id._id].type == 0)
+        getAgencyRents[rent.id._id].type_name = 'Appartement';
+      else if (getAgencyRents[rent.id._id].type == 1)
+        getAgencyRents[rent.id._id].type_name = 'Maison';
+      getAgencyRents[rent.id._id].title = getAgencyRents[rent.id._id].type_name + ' ' + getAgencyRents[rent.id._id].characteristics.area + 'm2 ' + getAgencyRents[rent.id._id].address.city + ' ' + getAgencyRents[rent.id._id].address.zipcode;
     });
-    res.json(agency.rents);
+    res.json(getAgencyRents);
   }).populate('rents.id').lean();
 });
 

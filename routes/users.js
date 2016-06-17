@@ -72,14 +72,16 @@ router.get('/:user_id/sales', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);
+    var getUserSales = {};
     _(user.sales).forEach(function(sale) {
-      if (sale.id.type == 0)
-        sale.id.type_name = 'Appartement';
-      else if (sale.id.type == 1)
-        sale.id.type_name = 'Maison';
-      sale.id.title = sale.id.type_name + ' ' + sale.id.characteristics.area + 'm2 ' + sale.id.address.city + ' ' + sale.id.address.zipcode;
+      getUserSales[sale.id._id] = sale.id;
+      if (getUserSales[sale.id._id].type == 0)
+        getUserSales[sale.id._id].type_name = 'Appartement';
+      else if (getUserSales[sale.id._id].type == 1)
+        getUserSales[sale.id._id].type_name = 'Maison';
+      getUserSales[sale.id._id].title = getUserSales[sale.id._id].type_name + ' ' + getUserSales[sale.id._id].characteristics.area + 'm2 ' + getUserSales[sale.id._id].address.city + ' ' + getUserSales[sale.id._id].address.zipcode;
     });
-    res.json(user.sales);
+    res.json(getUserSales);
   }).populate('sales.id').lean();
 });
 
@@ -88,14 +90,16 @@ router.get('/:user_id/rents', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);
+    var getUserRents = {};
     _(user.rents).forEach(function(rent) {
-      if (rent.id.type == 0)
-        rent.id.type_name = 'Appartement';
-      else if (rent.id.type == 1)
-        rent.id.type_name = 'Maison';
-      rent.id.title = rent.id.type_name + ' ' + rent.id.characteristics.area + 'm2 ' + rent.id.address.city + ' ' + rent.id.address.zipcode;
+      getUserRents[rent.id._id] = rent.id;
+      if (getUserRents[rent.id._id].type == 0)
+        getUserRents[rent.id._id].type_name = 'Appartement';
+      else if (getUserRents[rent.id._id].type == 1)
+        getUserRents[rent.id._id].type_name = 'Maison';
+      getUserRents[rent.id._id].title = rent.id.type_name + ' ' + getUserRents[rent.id._id].characteristics.area + 'm2 ' + getUserRents[rent.id._id].address.city + ' ' + getUserRents[rent.id._id].address.zipcode;
     });
-    res.json(user.rents);
+    res.json(getUserRents);
   }).populate('rents.id').lean();
 });
 
