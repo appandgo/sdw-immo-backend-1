@@ -3,7 +3,34 @@ var Sale = require('../models/sales');
 var User = require('../models/users');
 var Agency = require('../models/agencies');
 var FrontUser = require('../models/frontusers');
+var fs = require('fs');
 var _ = require('lodash');
+var multer = require('multer');
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    var dirSales = './public/images/sales/';
+    if (!fs.existsSync(dirSales)){
+      fs.mkdirSync(dirSales);
+    }
+    var dirSale = './public/images/sales/'+req.params.sale_id+'/';
+    if (!fs.existsSync(dirSale)){
+      fs.mkdirSync(dirSale);
+    }
+    cb(null, dirSale)
+  },
+  filename: function (req, file, cb) {
+    var getFileExt = function(fileName){
+      var fileExt = fileName.split(".");
+      if( fileExt.length === 1 || ( fileExt[0] === "" && fileExt.length === 2 ) ) {
+        return "";
+      }
+      return fileExt.pop();
+    }
+    cb(null, Date.now() + '.' + getFileExt(file.originalname))
+  }
+})
+var multerStorage = multer({ storage: storage })
+var upload = multerStorage.single('image');
 var functions = require('../functions');
 var router = express.Router();
 
@@ -160,7 +187,7 @@ router.get('/:sale_id', function(req, res, next) {
 });
 
 /* PUT update sale. */
-router.put('/:sale_id', function(req, res, next) {
+router.put('/:sale_id', upload, function(req, res, next) {
   Sale.findById(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
@@ -187,7 +214,13 @@ router.put('/:sale_id', function(req, res, next) {
     sale.description = req.body.description || sale.description;
     sale.owner = owner || sale.owner;
 
-    if ( typeof req.body.detail_name !== 'undefined' && req.body.detail_name )
+    if (req.file)
+      var image = {'path': req.file.path,
+        'caption': req.file.caption
+      }
+      sale.images.push(image)
+
+    if ( typeof req.body.detail_name != 'undefined' && req.body.detail_name )
       var detail = {'name': req.body.detail_name,
         'more': req.body.detail_more}
       sale.details.push(detail);

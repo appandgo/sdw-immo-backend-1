@@ -3,7 +3,34 @@ var Rent = require('../models/rents');
 var User = require('../models/users');
 var Agency = require('../models/agencies');
 var FrontUser = require('../models/frontusers');
+var fs = require('fs');
 var _ = require('lodash');
+var multer = require('multer');
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    var dirRents = './public/images/rents/';
+    if (!fs.existsSync(dirRents)){
+      fs.mkdirSync(dirRents);
+    }
+    var dirRent = './public/images/rents/'+req.params.sale_id+'/';
+    if (!fs.existsSync(dirRent)){
+      fs.mkdirSync(dirRent);
+    }
+    cb(null, dirRent)
+  },
+  filename: function (req, file, cb) {
+    var getFileExt = function(fileName){
+      var fileExt = fileName.split(".");
+      if( fileExt.length === 1 || ( fileExt[0] === "" && fileExt.length === 2 ) ) {
+        return "";
+      }
+      return fileExt.pop();
+    }
+    cb(null, Date.now() + '.' + getFileExt(file.originalname))
+  }
+})
+var multerStorage = multer({ storage: storage })
+var upload = multerStorage.single('image');
 var functions = require('../functions');
 var router = express.Router();
 
@@ -161,7 +188,7 @@ router.get('/:rent_id', function(req, res, next) {
 });
 
 /* PUT update rent. */
-router.put('/:rent_id', function(req, res, next) {
+router.put('/:rent_id', upload, function(req, res, next) {
   Rent.findById(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);
@@ -189,6 +216,12 @@ router.put('/:rent_id', function(req, res, next) {
     rent.characteristics = characteristics || rent.characteristics;
     rent.description = req.body.description || rent.description;
     rent.owner = owner || rent.owner;
+
+    if (req.file)
+      var image = {'path': req.file.path,
+        'caption': req.file.caption
+      }
+      rent.images.push(image)
 
     if ( typeof req.body.detail_name !== 'undefined' && req.body.detail_name )
       var detail = {'name': req.body.detail_name,
