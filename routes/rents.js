@@ -12,7 +12,7 @@ var storage = multer.diskStorage({
     if (!fs.existsSync(dirRents)){
       fs.mkdirSync(dirRents);
     }
-    var dirRent = './public/images/rents/'+req.params.sale_id+'/';
+    var dirRent = './public/images/rents/'+req.params.rent_id+'/';
     if (!fs.existsSync(dirRent)){
       fs.mkdirSync(dirRent);
     }
