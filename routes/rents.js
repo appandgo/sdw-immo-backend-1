@@ -188,7 +188,7 @@ router.get('/:rent_id', function(req, res, next) {
 });
 
 /* PUT update rent. */
-router.put('/:rent_id', upload, function(req, res, next) {
+router.put('/:rent_id', function(req, res, next) {
   Rent.findById(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);
@@ -227,6 +227,43 @@ router.put('/:rent_id', upload, function(req, res, next) {
       var detail = {'name': req.body.detail_name,
         'more': req.body.detail_more}
       rent.details.push(detail);
+
+    rent.save(function(err) {
+      if (err)
+        res.json(err);
+      res.json(rent);
+    });
+  });
+});
+
+/* POST new detail. */
+router.post('/:rent_id/details', function(req, res, next) {
+  Rent.findById(req.params.rent_id, function(err, rent) {
+    if (err)
+      res.json(err);
+
+    var detail = {'name': req.body.detail_name,
+      'more': req.body.detail_more}
+    rent.details.push(detail);
+
+    rent.save(function(err) {
+      if (err)
+        res.json(err);
+      res.json(rent);
+    });
+  });
+});
+
+/* POST new image. */
+router.post('/:rent_id/images', upload, function(req, res, next) {
+  Rent.findById(req.params.rent_id, function(err, rent) {
+    if (err)
+      res.json(err);
+
+    var image = {'path': req.file.path,
+      'caption': req.file.caption
+    }
+    rent.images.push(image)
 
     rent.save(function(err) {
       if (err)

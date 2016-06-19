@@ -187,7 +187,7 @@ router.get('/:sale_id', function(req, res, next) {
 });
 
 /* PUT update sale. */
-router.put('/:sale_id', upload, function(req, res, next) {
+router.put('/:sale_id', function(req, res, next) {
   Sale.findById(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
@@ -214,16 +214,42 @@ router.put('/:sale_id', upload, function(req, res, next) {
     sale.description = req.body.description || sale.description;
     sale.owner = owner || sale.owner;
 
-    if (req.file)
-      var image = {'path': req.file.path,
-        'caption': req.file.caption
-      }
-      sale.images.push(image)
+    sale.save(function(err) {
+      if (err)
+        res.json(err);
+      res.json(sale);
+    });
+  });
+});
 
-    if ( typeof req.body.detail_name != 'undefined' && req.body.detail_name )
-      var detail = {'name': req.body.detail_name,
-        'more': req.body.detail_more}
-      sale.details.push(detail);
+/* POST new detail. */
+router.post('/:sale_id/detail', function(req, res, next) {
+  Sale.findById(req.params.sale_id, function(err, sale) {
+    if (err)
+      res.json(err);
+
+    var detail = {'name': req.body.detail_name,
+      'more': req.body.detail_more}
+    sale.details.push(detail);
+
+    sale.save(function(err) {
+      if (err)
+        res.json(err);
+      res.json(sale);
+    });
+  });
+});
+
+/* POST new image. */
+router.post('/:sale_id/image', upload, function(req, res, next) {
+  Sale.findById(req.params.sale_id, function(err, sale) {
+    if (err)
+      res.json(err);
+
+    var image = {'path': req.file.path,
+      'caption': req.file.caption
+    }
+    sale.images.push(image);
 
     sale.save(function(err) {
       if (err)
