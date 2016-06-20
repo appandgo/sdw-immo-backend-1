@@ -99,6 +99,34 @@ router.put('/:frontuser_id', function(req, res, next) {
   });
 });
 
+/* DELETE frontuser sale. */
+router.delete('/:frontuser_id/sales/:sale_id', function(req, res, next) {
+  FrontUser.findOneAndUpdate({ '_id': req.params.frontuser_id, 'sales.id': req.params.sale_id }, {$pull: {sales: {id: req.params.sale_id}}}, function(err, frontuser) {
+    if (err)
+      res.json(err);
+    var saleDeleted;
+    _(frontuser.sales).forEach(function(sale) {
+      if (sale._id == req.params.sale_id)
+        saleDeleted = sale;
+    });
+    res.json(saleDeleted);
+  });
+});
+
+/* DELETE frontuser rent. */
+router.delete('/:frontuser_id/rents/:rent_id', function(req, res, next) {
+  FrontUser.findOneAndUpdate({ '_id': req.params.frontuser_id, 'rents.id': req.params.rent_id }, {$pull: {rents: {id: req.params.rent_id}}}, function(err, frontuser) {
+    if (err)
+      res.json(err);
+    var rentDeleted;
+    _(frontuser.rents).forEach(function(rent) {
+      if (rent._id == req.params.rent_id)
+        rentDeleted = rent;
+    });
+    res.json(rentDeleted);
+  });
+});
+
 /* DELETE user. */
 router.delete('/:user_id', function(req, res, next) {
   FrontUser.findByIdAndRemove(req.params.frontuser_id, function(err, frontuser) {

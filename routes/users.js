@@ -22,14 +22,9 @@ router.post('/', function(req, res) {
     if (err)
       res.json(err);
     if (req.body.agency_id)
-      Agency.findById(req.body.agency_id, function(err, agency) {
+      Agency.findOneAndUpdate({ '_id': req.body.agency_id }, {$push: {users: {id: user._id}}}, function(err, agency) {
         if (err)
           res.json(err);
-        agency.users.push({id: user._id});
-        agency.save(function(err) {
-          if (err)
-            res.json(err);
-        });
       });
     res.json(user);
   });
@@ -142,6 +137,10 @@ router.delete('/:user_id', function(req, res, next) {
   User.findByIdAndRemove(req.params.user_id, function(err, user) {
     if (err)
       res.json(err);
+    Agency.update({ 'users.id': user._id }, {$pull: {users: {id: user._id}}}, function(err, agency) {
+      if (err)
+        res.json(err);
+    });
     res.json(user);
   });
 });

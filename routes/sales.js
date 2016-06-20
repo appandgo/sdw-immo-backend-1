@@ -60,26 +60,18 @@ router.post('/', function(req, res) {
   sale.description = req.body.description;
   sale.owner = owner;
 
+  sale.reference = sale.characteristics.area + sale.characteristics.rooms + sale.characteristics.bedrooms + sale.owner.first_name.substr(0,3) + sale.owner.last_name.substr(-2, 2) + sale.owner.phone.substr(4, 2);
+
   sale.save(function(err) {
     if (err)
       res.json(err);
-    User.findById(req.body.user_id, function(err, user) {
+    User.findOneAndUpdate({ '_id': req.body.user_id }, {$push: {sales: {id: sale._id}}}, function(err, user) {
       if (err)
         res.json(err);
-      user.sales.push({id: sale._id});
-      user.save(function(err) {
-        if (err)
-          res.json(err);
-      });
     });
-    Agency.findById(req.body.agency_id, function(err, agency) {
+    Agency.findOneAndUpdate({ '_id': req.body.agency_id }, {$push: {sales: {id: sale._id}}}, function(err, agency) {
       if (err)
         res.json(err);
-      agency.sales.push({id: sale._id});
-      agency.save(function(err) {
-        if (err)
-          res.json(err);
-      });
     });
     res.json(sale);
   });
@@ -365,6 +357,18 @@ router.delete('/:sale_id', function(req, res, next) {
     var dirSale = './public/images/sales/'+req.params.sale_id+'/';
     if (fs.existsSync(dirSale))
       fs.rmdirSync(dirSale);
+    User.update({ 'sales.id': sale._id }, {$pull: {sales: {id: sale._id}}}, function(err, user) {
+      if (err)
+        res.json(err);
+    });
+    Agency.update({ 'sales.id': sale._id }, {$pull: {sales: {id: sale._id}}}, function(err, agency) {
+      if (err)
+        res.json(err);
+    });
+    FrontUser.update({ 'sales.id': sale._id }, {$pull: {sales: {id: sale._id}}}, function(err, front) {
+      if (err)
+        res.json(err);
+    });
     res.json(sale);
   });
 });

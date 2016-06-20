@@ -62,26 +62,18 @@ router.post('/', function(req, res) {
   rent.description = req.body.description;
   rent.owner = owner;
 
+  rent.reference = rent.characteristics.area + rent.characteristics.rooms + rent.characteristics.bedrooms + rent.owner.first_name.substr(0,3) + rent.owner.last_name.substr(-2, 2) + rent.owner.phone.substr(4, 2);
+
   rent.save(function(err) {
     if (err)
       res.json(err);
-    User.findById(req.body.user_id, function(err, user) {
+    User.findOneAndUpdate({ '_id': req.body.user_id }, {$push: {rents: {id: rent._id}}}, function(err, user) {
       if (err)
         res.json(err);
-      user.rents.push({id: rent._id});
-      user.save(function(err) {
-        if (err)
-          res.json(err);
-      });
     });
-    Agency.findById(req.body.agency_id, function(err, agency) {
+    Agency.findOneAndUpdate({ '_id': req.body.agency_id }, {$push: {rents: {id: rent._id}}}, function(err, agency) {
       if (err)
         res.json(err);
-      agency.rents.push({id: rent._id});
-      agency.save(function(err) {
-        if (err)
-          res.json(err);
-      });
     });
     res.json(rent);
   });
@@ -216,17 +208,6 @@ router.put('/:rent_id', function(req, res, next) {
     rent.characteristics = characteristics || rent.characteristics;
     rent.description = req.body.description || rent.description;
     rent.owner = owner || rent.owner;
-
-    if (req.file)
-      var image = {'path': req.file.path,
-        'caption': req.file.caption
-      }
-      rent.images.push(image)
-
-    if ( typeof req.body.detail_name !== 'undefined' && req.body.detail_name )
-      var detail = {'name': req.body.detail_name,
-        'more': req.body.detail_more}
-      rent.details.push(detail);
 
     rent.save(function(err) {
       if (err)
@@ -379,6 +360,18 @@ router.delete('/:rent_id', function(req, res, next) {
     var dirRent = './public/images/rents/'+req.params.rent_id+'/';
     if (fs.existsSync(dirRent))
       fs.rmdirSync(dirRent);
+    User.update({ 'rents.id': rent._id }, {$pull: {rents: {id: rent._id}}}, function(err, user) {
+      if (err)
+        res.json(err);
+    });
+    Agency.update({ 'rents.id': rent._id }, {$pull: {rents: {id: rent._id}}}, function(err, agency) {
+      if (err)
+        res.json(err);
+    });
+    FrontUser.update({ 'rents.id': rent._id }, {$pull: {rents: {id: rent._id}}}, function(err, frontuser) {
+      if (err)
+        res.json(err);
+    });
     res.json(rent);
   });
 });

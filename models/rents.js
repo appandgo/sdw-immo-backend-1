@@ -24,6 +24,7 @@ var RentsSchema = new mongoose.Schema({
     last_name: { type: String, required: true },
     phone: { type: String, required: true }
   },
+  reference: { type: String, required: true },
   views: { type: Number, required: true, default: 0}
 },
 {
