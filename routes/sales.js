@@ -235,7 +235,7 @@ router.post('/:sale_id/details', function(req, res) {
     sale.save(function(err) {
       if (err)
         res.json(err);
-      res.json(sale);
+      res.json(detail);
     });
   });
 });

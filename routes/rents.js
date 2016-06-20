@@ -249,7 +249,7 @@ router.post('/:rent_id/details', function(req, res) {
     rent.save(function(err) {
       if (err)
         res.json(err);
-      res.json(rent);
+      res.json(detail);
     });
   });
 });
