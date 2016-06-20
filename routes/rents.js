@@ -237,7 +237,7 @@ router.put('/:rent_id', function(req, res, next) {
 });
 
 /* POST new detail. */
-router.post('/:rent_id/details', function(req, res, next) {
+router.post('/:rent_id/details', function(req, res) {
   Rent.findById(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);
@@ -254,8 +254,54 @@ router.post('/:rent_id/details', function(req, res, next) {
   });
 });
 
+/* GET details. */
+router.get('/:rent_id/details', function(req, res, next) {
+  Rent.findOne({ '_id': req.params.rent_id }, function(err, rent) {
+    if (err)
+      res.json(err);
+    res.json(rent.details);
+  }).select('details');
+});
+
+/* GET detail. */
+router.get('/:rent_id/details/:detail_id', function(req, res, next) {
+  Rent.findOne({ '_id': req.params.rent_id, 'details._id': req.params.detail_id }, {'details.$': 1}, function(err, rent) {
+    if (err)
+      res.json(err);
+    res.json(rent.details[0]);
+  });
+});
+
+/* PUT update detail. */
+router.put('/:rent_id/details/:detail_id', function(req, res, next) {
+  Rent.findOneAndUpdate({ '_id': req.params.rent_id, 'details._id': req.params.detail_id }, {$set: {'details.$.name': req.body.detail_name, 'details.$.more': req.body.detail_more}}, {new: true}, function(err, rent) {
+    if (err)
+      res.json(err);
+    var detailUpdated;
+    _(rent.details).forEach(function(detail) {
+      if (detail._id == req.params.detail_id)
+        detailUpdated = detail;
+    });
+    res.json(detailUpdated);
+  });
+});
+
+/* DELETE detail. */
+router.delete('/:rent_id/details/:detail_id', function(req, res, next) {
+  Rent.findOneAndUpdate({ '_id': req.params.rent_id, 'details._id': req.params.detail_id }, {$pull: {details: {_id: req.params.detail_id}}}, function(err, rent) {
+    if (err)
+      res.json(err);
+    var detailDeleted;
+    _(rent.details).forEach(function(detail) {
+      if (detail._id == req.params.detail_id)
+        detailDeleted = detail;
+    });
+    res.json(detailDeleted);
+  });
+});
+
 /* POST new image. */
-router.post('/:rent_id/images', upload, function(req, res, next) {
+router.post('/:rent_id/images', upload, function(req, res) {
   Rent.findById(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);

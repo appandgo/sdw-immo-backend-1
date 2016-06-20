@@ -223,7 +223,7 @@ router.put('/:sale_id', function(req, res, next) {
 });
 
 /* POST new detail. */
-router.post('/:sale_id/detail', function(req, res, next) {
+router.post('/:sale_id/details', function(req, res) {
   Sale.findById(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
@@ -240,8 +240,54 @@ router.post('/:sale_id/detail', function(req, res, next) {
   });
 });
 
+/* GET details. */
+router.get('/:sale_id/details', function(req, res, next) {
+  Sale.findOne({ '_id': req.params.sale_id }, function(err, sale) {
+    if (err)
+      res.json(err);
+    res.json(sale.details);
+  }).select('details');
+});
+
+/* GET detail. */
+router.get('/:sale_id/details/:detail_id', function(req, res, next) {
+  Sale.findOne({ '_id': req.params.sale_id, 'details._id': req.params.detail_id }, {'details.$': 1}, function(err, sale) {
+    if (err)
+      res.json(err);
+    res.json(sale.details[0]);
+  });
+});
+
+/* PUT update detail. */
+router.put('/:sale_id/details/:detail_id', function(req, res, next) {
+  Sale.findOneAndUpdate({ '_id': req.params.sale_id, 'details._id': req.params.detail_id }, {$set: {'details.$.name': req.body.detail_name, 'details.$.more': req.body.detail_more}}, {new: true}, function(err, sale) {
+    if (err)
+      res.json(err);
+    var detailUpdated;
+    _(sale.details).forEach(function(detail) {
+      if (detail._id == req.params.detail_id)
+        detailUpdated = detail;
+    });
+    res.json(detailUpdated);
+  });
+});
+
+/* DELETE detail. */
+router.delete('/:sale_id/details/:detail_id', function(req, res, next) {
+  Sale.findOneAndUpdate({ '_id': req.params.sale_id, 'details._id': req.params.detail_id }, {$pull: {details: {_id: req.params.detail_id}}}, function(err, sale) {
+    if (err)
+      res.json(err);
+    var detailDeleted;
+    _(sale.details).forEach(function(detail) {
+      if (detail._id == req.params.detail_id)
+        detailDeleted = detail;
+    });
+    res.json(detailDeleted);
+  });
+});
+
 /* POST new image. */
-router.post('/:sale_id/image', upload, function(req, res, next) {
+router.post('/:sale_id/images', upload, function(req, res) {
   Sale.findById(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
