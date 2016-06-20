@@ -307,15 +307,62 @@ router.post('/:rent_id/images', upload, function(req, res) {
       res.json(err);
 
     var image = {'path': req.file.path,
-      'caption': req.file.caption
+      'caption': req.body.caption
     }
-    rent.images.push(image)
+    rent.images.push(image);
 
     rent.save(function(err) {
       if (err)
         res.json(err);
       res.json(rent);
     });
+  });
+});
+
+/* GET images. */
+router.get('/:rent_id/images', function(req, res, next) {
+  Rent.findOne({ '_id': req.params.rent_id }, function(err, rent) {
+    if (err)
+      res.json(err);
+    res.json(rent.images);
+  }).select('images');
+});
+
+/* GET image. */
+router.get('/:rent_id/images/:image_id', function(req, res, next) {
+  Rent.findOne({ '_id': req.params.rent_id, 'images._id': req.params.image_id }, {'images.$': 1}, function(err, rent) {
+    if (err)
+      res.json(err);
+    res.json(rent.images[0]);
+  });
+});
+
+/* PUT update image. */
+router.put('/:rent_id/images/:image_id', function(req, res, next) {
+  Rent.findOneAndUpdate({ '_id': req.params.rent_id, 'images._id': req.params.image_id }, {$set: {'images.$.caption': req.body.caption}}, {new: true}, function(err, rent) {
+    if (err)
+      res.json(err);
+    var imageUpdated;
+    _(rent.images).forEach(function(image) {
+      if (image._id == req.params.image_id)
+        imageUpdated = image;
+    });
+    res.json(imageUpdated);
+  });
+});
+
+/* DELETE image. */
+router.delete('/:rent_id/images/:image_id', function(req, res, next) {
+  Rent.findOneAndUpdate({ '_id': req.params.rent_id, 'images._id': req.params.image_id }, {$pull: {images: {_id: req.params.image_id}}}, function(err, rent) {
+    if (err)
+      res.json(err);
+    var imageDeleted;
+    _(rent.images).forEach(function(image) {
+      if (image._id == req.params.image_id)
+        imageDeleted = image;
+    });
+    fs.unlink(imageDeleted.path);
+    res.json(imageDeleted);
   });
 });
 

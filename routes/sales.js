@@ -293,7 +293,7 @@ router.post('/:sale_id/images', upload, function(req, res) {
       res.json(err);
 
     var image = {'path': req.file.path,
-      'caption': req.file.caption
+      'caption': req.body.caption
     }
     sale.images.push(image);
 
@@ -302,6 +302,53 @@ router.post('/:sale_id/images', upload, function(req, res) {
         res.json(err);
       res.json(sale);
     });
+  });
+});
+
+/* GET images. */
+router.get('/:sale_id/images', function(req, res, next) {
+  Sale.findOne({ '_id': req.params.sale_id }, function(err, sale) {
+    if (err)
+      res.json(err);
+    res.json(sale.images);
+  }).select('images');
+});
+
+/* GET image. */
+router.get('/:sale_id/images/:image_id', function(req, res, next) {
+  Sale.findOne({ '_id': req.params.sale_id, 'images._id': req.params.image_id }, {'images.$': 1}, function(err, sale) {
+    if (err)
+      res.json(err);
+    res.json(sale.images[0]);
+  });
+});
+
+/* PUT update image. */
+router.put('/:sale_id/images/:image_id', function(req, res, next) {
+  Sale.findOneAndUpdate({ '_id': req.params.sale_id, 'images._id': req.params.image_id }, {$set: {'images.$.caption': req.body.caption}}, {new: true}, function(err, sale) {
+    if (err)
+      res.json(err);
+    var imageUpdated;
+    _(sale.images).forEach(function(image) {
+      if (image._id == req.params.image_id)
+        imageUpdated = image;
+    });
+    res.json(imageUpdated);
+  });
+});
+
+/* DELETE image. */
+router.delete('/:sale_id/images/:image_id', function(req, res, next) {
+  Sale.findOneAndUpdate({ '_id': req.params.sale_id, 'images._id': req.params.image_id }, {$pull: {images: {_id: req.params.image_id}}}, function(err, sale) {
+    if (err)
+      res.json(err);
+    var imageDeleted;
+    _(sale.images).forEach(function(image) {
+      if (image._id == req.params.image_id)
+        imageDeleted = image;
+    });
+    fs.unlink(imageDeleted.path);
+    res.json(imageDeleted);
   });
 });
 
