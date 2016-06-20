@@ -361,7 +361,8 @@ router.delete('/:rent_id/images/:image_id', function(req, res, next) {
       if (image._id == req.params.image_id)
         imageDeleted = image;
     });
-    fs.unlink(imageDeleted.path);
+    if (fs.exists(imageDeleted.path))
+      fs.unlink(imageDeleted.path);
     res.json(imageDeleted);
   });
 });
@@ -371,6 +372,13 @@ router.delete('/:rent_id', function(req, res, next) {
   Rent.findByIdAndRemove(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);
+    _(rent.images).forEach(function(image) {
+      if (fs.existsSync(image.path))
+        fs.unlinkSync(image.path);
+    });
+    var dirRent = './public/images/rents/'+req.params.rent_id+'/';
+    if (fs.existsSync(dirRent))
+      fs.rmdirSync(dirRent);
     res.json(rent);
   });
 });

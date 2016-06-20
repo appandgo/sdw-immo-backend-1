@@ -347,7 +347,8 @@ router.delete('/:sale_id/images/:image_id', function(req, res, next) {
       if (image._id == req.params.image_id)
         imageDeleted = image;
     });
-    fs.unlink(imageDeleted.path);
+    if (fs.existsSync(imageDeleted.path))
+      fs.unlinkSync(imageDeleted.path);
     res.json(imageDeleted);
   });
 });
@@ -357,6 +358,13 @@ router.delete('/:sale_id', function(req, res, next) {
   Sale.findByIdAndRemove(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
+    _(sale.images).forEach(function(image) {
+      if (fs.existsSync(image.path))
+        fs.unlinkSync(image.path);
+    });
+    var dirSale = './public/images/sales/'+req.params.sale_id+'/';
+    if (fs.existsSync(dirSale))
+      fs.rmdirSync(dirSale);
     res.json(sale);
   });
 });
