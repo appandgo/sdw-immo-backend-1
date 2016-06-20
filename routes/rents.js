@@ -242,8 +242,8 @@ router.post('/:rent_id/details', function(req, res) {
     if (err)
       res.json(err);
 
-    var detail = {'name': req.body.detail_name,
-      'more': req.body.detail_more}
+    var detail = {'name': req.body.name,
+      'more': req.body.more}
     rent.details.push(detail);
 
     rent.save(function(err) {
@@ -274,7 +274,7 @@ router.get('/:rent_id/details/:detail_id', function(req, res, next) {
 
 /* PUT update detail. */
 router.put('/:rent_id/details/:detail_id', function(req, res, next) {
-  Rent.findOneAndUpdate({ '_id': req.params.rent_id, 'details._id': req.params.detail_id }, {$set: {'details.$.name': req.body.detail_name, 'details.$.more': req.body.detail_more}}, {new: true}, function(err, rent) {
+  Rent.findOneAndUpdate({ '_id': req.params.rent_id, 'details._id': req.params.detail_id }, {$set: {'details.$.name': req.body.name, 'details.$.more': req.body.more}}, {new: true}, function(err, rent) {
     if (err)
       res.json(err);
     var detailUpdated;

@@ -228,8 +228,8 @@ router.post('/:sale_id/details', function(req, res) {
     if (err)
       res.json(err);
 
-    var detail = {'name': req.body.detail_name,
-      'more': req.body.detail_more}
+    var detail = {'name': req.body.name,
+      'more': req.body.more}
     sale.details.push(detail);
 
     sale.save(function(err) {
@@ -260,7 +260,7 @@ router.get('/:sale_id/details/:detail_id', function(req, res, next) {
 
 /* PUT update detail. */
 router.put('/:sale_id/details/:detail_id', function(req, res, next) {
-  Sale.findOneAndUpdate({ '_id': req.params.sale_id, 'details._id': req.params.detail_id }, {$set: {'details.$.name': req.body.detail_name, 'details.$.more': req.body.detail_more}}, {new: true}, function(err, sale) {
+  Sale.findOneAndUpdate({ '_id': req.params.sale_id, 'details._id': req.params.detail_id }, {$set: {'details.$.name': req.body.name, 'details.$.more': req.body.more}}, {new: true}, function(err, sale) {
     if (err)
       res.json(err);
     var detailUpdated;
