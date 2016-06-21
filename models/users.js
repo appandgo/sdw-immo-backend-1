@@ -1,3 +1,5 @@
+// Users are the super administrators, administrators and editors (back-office)
+
 var mongoose = require('mongoose');
 
 var UsersSchema = new mongoose.Schema({

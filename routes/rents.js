@@ -376,7 +376,7 @@ router.delete('/:rent_id', function(req, res, next) {
   });
 });
 
-/* SAVE rent */
+/* SAVE in frontuser favorite rents */
 router.post('/:rent_id/save', function(req, res) {
   Rent.findById(req.params.rent_id, function(err, rent) {
     if (err)

@@ -6,7 +6,7 @@ var jwt = require('jsonwebtoken');
 var functions = require('../functions');
 var router = express.Router();
 
-/* POST new user */
+/* [POST : /users ] Registering a new user */
 router.post('/', function(req, res) {
   var user = new User();
 
@@ -30,7 +30,7 @@ router.post('/', function(req, res) {
   });
 });
 
-/* GET users listing. */
+/* [GET : /users ] Get information from all users */
 router.get('/', function(req, res, next) {
   User.find(function(err, users) {
     if (err)
@@ -47,7 +47,7 @@ router.get('/', function(req, res, next) {
   }).select('-password').lean();
 });
 
-/* GET user. */
+/* [GET : /users/:user_id ] Get information from a user */
 router.get('/:user_id', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
@@ -62,7 +62,7 @@ router.get('/:user_id', function(req, res, next) {
   }).select('-password').lean();
 });
 
-/* GET user sales. */
+/* [GET : /users/:user_id/sales ] Get sales created by a user */
 router.get('/:user_id/sales', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
@@ -80,7 +80,7 @@ router.get('/:user_id/sales', function(req, res, next) {
   }).populate('sales.id').lean();
 });
 
-/* GET user rents. */
+/* [GET : /users/:user_id/rents ] Get rents created by a user */
 router.get('/:user_id/rents', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
@@ -98,7 +98,7 @@ router.get('/:user_id/rents', function(req, res, next) {
   }).populate('rents.id').lean();
 });
 
-/* PUT update user. */
+/* [PUT : /users/:user_id ] Update a user's information */
 router.put('/:user_id', function(req, res, next) {
   User.findById(req.params.user_id, function(err, user) {
     if (err)
@@ -132,7 +132,7 @@ router.put('/:user_id', function(req, res, next) {
   });
 });
 
-/* DELETE user. */
+/* [DELETE : /users/:user_id ] Delete User */
 router.delete('/:user_id', function(req, res, next) {
   User.findByIdAndRemove(req.params.user_id, function(err, user) {
     if (err)
@@ -145,7 +145,7 @@ router.delete('/:user_id', function(req, res, next) {
   });
 });
 
-/* LOGIN user. */
+/* [POST : /users/login ] Login a user */
 router.post('/login', function(req, res) {
   User.findOne({
     username: req.body.username

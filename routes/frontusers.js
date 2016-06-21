@@ -5,7 +5,7 @@ var _ = require('lodash');
 var functions = require('../functions');
 var router = express.Router();
 
-/* POST new user */
+/* [POST : /frontusers ] Registering a new frontuser */
 router.post('/', function(req, res) {
   var frontuser = new FrontUser();
 
@@ -23,7 +23,7 @@ router.post('/', function(req, res) {
   });
 });
 
-/* GET frontusers listing. */
+/* [GET : /frontusers ] Get information from all frontusers */
 router.get('/', function(req, res, next) {
   FrontUser.find(function(err, frontusers) {
     if (err)
@@ -32,7 +32,7 @@ router.get('/', function(req, res, next) {
   }).select('-password');
 });
 
-/* GET user. */
+/* [GET : /frontusers/:frontuser_id ] Get information from a frontuser */
 router.get('/:frontuser_id', function(req, res, next) {
   FrontUser.findById(req.params.frontuser_id, function(err, frontuser) {
     if (err)
@@ -41,7 +41,7 @@ router.get('/:frontuser_id', function(req, res, next) {
   }).select('-password');
 });
 
-/* GET user sales. */
+/* [GET : /frontusers/:frontuser_id/sales ] Get favorite user sales */
 router.get('/:frontuser_id/sales', function(req, res, next) {
   FrontUser.findById(req.params.frontuser_id, function(err, frontuser) {
     if (err)
@@ -59,7 +59,7 @@ router.get('/:frontuser_id/sales', function(req, res, next) {
   }).populate('sales.id').lean();
 });
 
-/* GET user rents. */
+/* [GET : /frontusers/:frontuser_id/rents ] Get favorite user rents */
 router.get('/:frontuser_id/rents', function(req, res, next) {
   FrontUser.findById(req.params.frontuser_id, function(err, frontuser) {
     if (err)
@@ -77,7 +77,7 @@ router.get('/:frontuser_id/rents', function(req, res, next) {
   }).populate('rents.id').lean();
 });
 
-/* PUT update user. */
+/* [PUT : /frontusers/:frontuser_id ] Update a frontuser's information */
 router.put('/:frontuser_id', function(req, res, next) {
   FrontUser.findById(req.params.frontuser_id, function(err, user) {
     if (err)
@@ -99,7 +99,7 @@ router.put('/:frontuser_id', function(req, res, next) {
   });
 });
 
-/* DELETE frontuser sale. */
+/* [DELETE : /frontusers/:frontuser_id ] Remove a sale of a frontuser favorites */
 router.delete('/:frontuser_id/sales/:sale_id', function(req, res, next) {
   FrontUser.findOneAndUpdate({ '_id': req.params.frontuser_id, 'sales.id': req.params.sale_id }, {$pull: {sales: {id: req.params.sale_id}}}, function(err, frontuser) {
     if (err)
@@ -113,7 +113,7 @@ router.delete('/:frontuser_id/sales/:sale_id', function(req, res, next) {
   });
 });
 
-/* DELETE frontuser rent. */
+/* [DELETE : /frontusers/:frontuser_id ] Remove a rent of a frontuser favorites */
 router.delete('/:frontuser_id/rents/:rent_id', function(req, res, next) {
   FrontUser.findOneAndUpdate({ '_id': req.params.frontuser_id, 'rents.id': req.params.rent_id }, {$pull: {rents: {id: req.params.rent_id}}}, function(err, frontuser) {
     if (err)
@@ -127,7 +127,7 @@ router.delete('/:frontuser_id/rents/:rent_id', function(req, res, next) {
   });
 });
 
-/* DELETE user. */
+/* [DELETE : /frontusers/:frontuser_id ] Delete frontuser */
 router.delete('/:user_id', function(req, res, next) {
   FrontUser.findByIdAndRemove(req.params.frontuser_id, function(err, frontuser) {
     if (err)
@@ -136,7 +136,7 @@ router.delete('/:user_id', function(req, res, next) {
   });
 });
 
-/* LOGIN frontuser. */
+/* [POST : /frontusers/login ] Login a frontuser */
 router.post('/login', function(req, res) {
   FrontUser.findOne({
     username: req.body.username

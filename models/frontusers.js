@@ -1,3 +1,5 @@
+// FrontUsers are the registered visitors can save their favorite sales or rent (front-office)
+
 var mongoose = require('mongoose');
 
 var FrontUsersSchema = new mongoose.Schema({

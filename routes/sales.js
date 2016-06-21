@@ -373,7 +373,7 @@ router.delete('/:sale_id', function(req, res, next) {
   });
 });
 
-/* SAVE sale */
+/* SAVE in frontuser favorite sales */
 router.post('/:sale_id/save', function(req, res) {
   Sale.findById(req.params.sale_id, function(err, sale) {
     if (err)
