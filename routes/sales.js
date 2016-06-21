@@ -5,32 +5,6 @@ var Agency = require('../models/agencies');
 var FrontUser = require('../models/frontusers');
 var fs = require('fs');
 var _ = require('lodash');
-var multer = require('multer');
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    var dirSales = './public/images/sales/';
-    if (!fs.existsSync(dirSales)){
-      fs.mkdirSync(dirSales);
-    }
-    var dirSale = './public/images/sales/'+req.params.sale_id+'/';
-    if (!fs.existsSync(dirSale)){
-      fs.mkdirSync(dirSale);
-    }
-    cb(null, dirSale)
-  },
-  filename: function (req, file, cb) {
-    var getFileExt = function(fileName){
-      var fileExt = fileName.split(".");
-      if( fileExt.length === 1 || ( fileExt[0] === "" && fileExt.length === 2 ) ) {
-        return "";
-      }
-      return fileExt.pop();
-    }
-    cb(null, Date.now() + '.' + getFileExt(file.originalname))
-  }
-})
-var multerStorage = multer({ storage: storage })
-var upload = multerStorage.single('image');
 var functions = require('../functions');
 var router = express.Router();
 
@@ -287,21 +261,11 @@ router.delete('/:sale_id/details/:detail_id', function(req, res, next) {
 });
 
 /* POST new image. */
-router.post('/:sale_id/images', upload, function(req, res) {
-  Sale.findById(req.params.sale_id, function(err, sale) {
+router.post('/:sale_id/images', function(req, res) {
+  Sale.findOneAndUpdate({ '_id': req.params.sale_id }, {$push: {images: {image: req.body.image, caption: req.body.caption}}}, {new: true}, function(err, sale) {
     if (err)
       res.json(err);
-
-    var image = {'path': req.file.path,
-      'caption': req.body.caption
-    }
-    sale.images.push(image);
-
-    sale.save(function(err) {
-      if (err)
-        res.json(err);
-      res.json(sale);
-    });
+    res.json(sale);
   });
 });
 
@@ -347,8 +311,6 @@ router.delete('/:sale_id/images/:image_id', function(req, res, next) {
       if (image._id == req.params.image_id)
         imageDeleted = image;
     });
-    if (fs.existsSync(imageDeleted.path))
-      fs.unlinkSync(imageDeleted.path);
     res.json(imageDeleted);
   });
 });
@@ -358,13 +320,6 @@ router.delete('/:sale_id', function(req, res, next) {
   Sale.findByIdAndRemove(req.params.sale_id, function(err, sale) {
     if (err)
       res.json(err);
-    _(sale.images).forEach(function(image) {
-      if (fs.existsSync(image.path))
-        fs.unlinkSync(image.path);
-    });
-    var dirSale = './public/images/sales/'+req.params.sale_id+'/';
-    if (fs.existsSync(dirSale))
-      fs.rmdirSync(dirSale);
     User.update({ 'sales.id': sale._id }, {$pull: {sales: {id: sale._id}}}, function(err, user) {
       if (err)
         res.json(err);

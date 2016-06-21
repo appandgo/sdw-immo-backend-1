@@ -18,7 +18,7 @@ var RentsSchema = new mongoose.Schema({
     bedrooms: { type: Number, required: true, min: 0, max: 99 } },
   details: [ { name: String, more: String } ],
   description: { type: String, required: true },
-  images: [ { path: String, caption: String } ],
+  images: [ { image: Buffer, caption: String } ],
   owner: {
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },

@@ -5,32 +5,6 @@ var Agency = require('../models/agencies');
 var FrontUser = require('../models/frontusers');
 var fs = require('fs');
 var _ = require('lodash');
-var multer = require('multer');
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    var dirRents = './public/images/rents/';
-    if (!fs.existsSync(dirRents)){
-      fs.mkdirSync(dirRents);
-    }
-    var dirRent = './public/images/rents/'+req.params.rent_id+'/';
-    if (!fs.existsSync(dirRent)){
-      fs.mkdirSync(dirRent);
-    }
-    cb(null, dirRent)
-  },
-  filename: function (req, file, cb) {
-    var getFileExt = function(fileName){
-      var fileExt = fileName.split(".");
-      if( fileExt.length === 1 || ( fileExt[0] === "" && fileExt.length === 2 ) ) {
-        return "";
-      }
-      return fileExt.pop();
-    }
-    cb(null, Date.now() + '.' + getFileExt(file.originalname))
-  }
-})
-var multerStorage = multer({ storage: storage })
-var upload = multerStorage.single('image');
 var functions = require('../functions');
 var router = express.Router();
 
@@ -289,21 +263,12 @@ router.delete('/:rent_id/details/:detail_id', function(req, res, next) {
 });
 
 /* POST new image. */
-router.post('/:rent_id/images', upload, function(req, res) {
-  Rent.findById(req.params.rent_id, function(err, rent) {
+router.post('/:rent_id/images', function(req, res) {
+  Rent.findOneAndUpdate({ '_id': req.params.rent_id }, {$push: {images: {image: req.body.image, caption: req.body.caption}}}, {new: true}, function(err, rent) {
     if (err)
       res.json(err);
-
-    var image = {'path': req.file.path,
-      'caption': req.body.caption
-    }
-    rent.images.push(image);
-
-    rent.save(function(err) {
-      if (err)
-        res.json(err);
-      res.json(rent);
-    });
+    console.log(rent.images);
+    res.json(rent);
   });
 });
 
@@ -349,8 +314,6 @@ router.delete('/:rent_id/images/:image_id', function(req, res, next) {
       if (image._id == req.params.image_id)
         imageDeleted = image;
     });
-    if (fs.exists(imageDeleted.path))
-      fs.unlink(imageDeleted.path);
     res.json(imageDeleted);
   });
 });
@@ -360,13 +323,6 @@ router.delete('/:rent_id', function(req, res, next) {
   Rent.findByIdAndRemove(req.params.rent_id, function(err, rent) {
     if (err)
       res.json(err);
-    _(rent.images).forEach(function(image) {
-      if (fs.existsSync(image.path))
-        fs.unlinkSync(image.path);
-    });
-    var dirRent = './public/images/rents/'+req.params.rent_id+'/';
-    if (fs.existsSync(dirRent))
-      fs.rmdirSync(dirRent);
     User.update({ 'rents.id': rent._id }, {$pull: {rents: {id: rent._id}}}, function(err, user) {
       if (err)
         res.json(err);
