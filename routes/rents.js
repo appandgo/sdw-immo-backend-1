@@ -190,6 +190,8 @@ router.put('/:rent_id', function(req, res, next) {
     rent.description = req.body.description || rent.description;
     rent.owner = owner || rent.owner;
 
+    rent.reference = rent.characteristics.area + rent.characteristics.rooms + rent.characteristics.bedrooms + rent.owner.first_name.substr(0,3) + rent.owner.last_name.substr(-2, 2) + rent.owner.phone.substr(4, 2);
+
     rent.save(function(err) {
       if (err)
         res.json(err);

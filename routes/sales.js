@@ -188,6 +188,8 @@ router.put('/:sale_id', function(req, res, next) {
     sale.description = req.body.description || sale.description;
     sale.owner = owner || sale.owner;
 
+    sale.reference = sale.characteristics.area + sale.characteristics.rooms + sale.characteristics.bedrooms + sale.owner.first_name.substr(0,3) + sale.owner.last_name.substr(-2, 2) + sale.owner.phone.substr(4, 2);
+
     sale.save(function(err) {
       if (err)
         res.json(err);
