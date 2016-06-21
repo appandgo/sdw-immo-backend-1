@@ -130,6 +130,11 @@ router.get('/', function(req, res, next) {
   else if (req.query['sort'] == 'rentarea' && req.query['order'] == 'desc')
     sortQuery = {'rentarea': -1};
 
+  var perPage = _.toInteger(req.query['perpage']) || 10;
+  var page = _.toInteger(req.query['page']) || 0;
+  var skip = perPage * page;
+  var limit = perPage;
+
   Rent.aggregate([{ $project: { _id: 1,
       createdAt: 1,
       updatedAt: 1,
@@ -144,7 +149,9 @@ router.get('/', function(req, res, next) {
       views: 1,
       rentarea: { $divide: [ '$characteristics.rent', '$characteristics.area' ] } } },
     { $match : { $and: [ filteredQuery ] } },
-    { $sort: sortQuery }
+    { $sort: sortQuery },
+    { $skip: skip },
+    { $limit: limit }
   ], function(err, rents) {
     if (err)
       res.json(err);

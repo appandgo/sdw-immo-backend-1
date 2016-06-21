@@ -79,6 +79,7 @@ router.post('/', function(req, res) {
 
 /* GET sales listing. */
 router.get('/', function(req, res, next) {
+
   var filteredQuery = {};
 
   filteredQuery['state'] = true || false;
@@ -128,6 +129,11 @@ router.get('/', function(req, res, next) {
   else if (req.query['sort'] == 'pricearea' && req.query['order'] == 'desc')
     sortQuery = {'pricearea': -1};
 
+  var perPage = _.toInteger(req.query['perpage']) || 10;
+  var page = _.toInteger(req.query['page']) || 0;
+  var skip = perPage * page;
+  var limit = perPage;
+
   Sale.aggregate([{ $project: { _id: 1,
       createdAt: 1,
       updatedAt: 1,
@@ -142,7 +148,9 @@ router.get('/', function(req, res, next) {
       views: 1,
       pricearea: { $divide: [ '$characteristics.price', '$characteristics.area' ] } } },
     { $match : { $and: [ filteredQuery ] } },
-    { $sort: sortQuery }
+    { $sort: sortQuery },
+    { $skip: skip },
+    { $limit: limit }
   ], function(err, sales) {
     if (err)
       res.json(err);
