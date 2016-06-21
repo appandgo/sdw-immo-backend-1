@@ -267,7 +267,6 @@ router.post('/:rent_id/images', function(req, res) {
   Rent.findOneAndUpdate({ '_id': req.params.rent_id }, {$push: {images: {image: req.body.image, caption: req.body.caption}}}, {new: true}, function(err, rent) {
     if (err)
       res.json(err);
-    console.log(rent.images);
     res.json(rent);
   });
 });
