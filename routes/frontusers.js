@@ -155,14 +155,16 @@ router.post('/login', function(req, res) {
           expiresIn: 60 * 60 // expires in 24 hours
         });
         // return the information including token as JSON
+        delete frontuser.password;
         res.json({
           success: true,
           message: 'Enjoy your token!',
-          token: token
+          token: token,
+          frontuser: frontuser
         });
       }
     }
-  });
+  }).lean();
 });
 
 module.exports = router;
